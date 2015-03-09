@@ -7,6 +7,10 @@ angular.module("directiveExample1").controller ("MainCtrl", ['$scope',
     function($scope) {
         $scope.testvar = "a sample string from MainCtrl";
         console.log("In MainCtrl");
+        
+        $scope.mainCtrlCallback = function () {
+            alert ("This is the Main Controller Callback - ");
+        }
     }]);
 
 angular.module("directiveExample1").directive('exampleDirective', 
@@ -15,13 +19,15 @@ angular.module("directiveExample1").directive('exampleDirective',
             restrict: 'EA',
             template: '<p>Hello {{var1}} !</p><p>Hello {{var2}} !</p><p>Hello isolated {{isovar}} !</p>',
             scope: {
-                isovar: '='
+                isovar: '=',
+                cbk: '&callback'
             },
             controller: function($scope, $element){
                 $scope.var1 = "In Directive's Controller ";
                 console.log("In directive's controller");
                 console.log("Controller function Isolated : "+$scope.isovar);
                 $scope.isovar = "a sample tinkered value from the directive's controller";
+                $scope.cbk();
             },
             link: function(scope, el, attr) {
                 scope.var2 = "In directive's link";
