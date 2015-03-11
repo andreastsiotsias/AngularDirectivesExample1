@@ -1,9 +1,9 @@
 /**
  * This is the module definition
  */
-angular.module("directiveExample1", [ "kendo.directives", "utilities.tsiotsias.uk" ]);
+angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
-angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityServices',
+angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityFunctions',
     function($scope, jsonpHTTPDataService, utilityServices) {
         $scope.testvar = "A sample string from MainCtrl";
         console.log("In MainCtrl");
@@ -16,6 +16,7 @@ angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTT
         httpDataPromise.then(function(result) {  // this is only run after $http completes
             var httpData = result;
             console.log("httpData = "+JSON.stringify(httpData.data));
+            $scope.goods = result.data;
         });
                 
 }]);
