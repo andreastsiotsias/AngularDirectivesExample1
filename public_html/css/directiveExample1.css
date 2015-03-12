@@ -9,14 +9,3 @@ input:required:valid {
     background-position: right top; 
     background-repeat: no-repeat; 
 }
-fieldset {
-    background: none repeat scroll 0 0 #fcfaf0;
-    border: 2px solid #e0d8b7;
-    color: #000;
-}
-fieldset {
-    background: linear-gradient(to bottom, white 80%, #eee) repeat scroll 0 0 rgba(0, 0, 0, 0);
-    border: 1px solid #ccc;
-    margin: 1em 0;
-    padding: 10px;
-}

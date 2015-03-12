@@ -1,5 +1,15 @@
 {
-    "attributes": {},
+    "attributes": {
+        "email-inputfield": {
+            "context": "div"
+        },
+        "example-directive2": {
+            "context": "div"
+        },
+        "email-input-field": {
+            "context": "div"
+        }
+    },
     "elements": {
         "example-directive": {}
     }

@@ -44,3 +44,20 @@ angular.module("directiveExample1").directive('exampleDirective',
             }
         }
     });
+    
+angular.module("directiveExample1").directive('emailInputField', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/emailInputField.html',
+            replace: true,
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                $scope.divid = utilityFunctions.guid();
+                console.log("In emailInputField's controller");
+            },
+            link: function(scope, el, attr) {
+                console.log("In emailInputField's link");
+                }
+        }
+    });
