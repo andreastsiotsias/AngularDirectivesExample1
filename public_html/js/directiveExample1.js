@@ -25,7 +25,7 @@ angular.module("directiveExample1").directive('exampleDirective',
     function() {
         return {
             restrict: 'EA',
-            template: '<p>Hello {{var1}} !</p><p>Hello {{var2}} !</p><p>Hello isolated {{isovar}} !</p>',
+            templateUrl: './templates/emailInput.html',
             scope: {
                 isovar: '=',
                 cbk: '&callback'
