@@ -1,16 +1,19 @@
 {
+    "elements": {
+        "example-directive": {}
+    },
     "attributes": {
-        "email-inputfield": {
+        "password-input-field": {
             "context": "div"
         },
-        "example-directive2": {
+        "email-inputfield": {
             "context": "div"
         },
         "email-input-field": {
             "context": "div"
+        },
+        "example-directive2": {
+            "context": "div"
         }
-    },
-    "elements": {
-        "example-directive": {}
     }
 }
