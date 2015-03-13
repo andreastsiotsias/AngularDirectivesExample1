@@ -1,7 +1,4 @@
 {
-    "elements": {
-        "example-directive": {}
-    },
     "attributes": {
         "password-input-field": {
             "context": "div"
@@ -9,11 +6,20 @@
         "email-inputfield": {
             "context": "div"
         },
+        "example-directive2": {
+            "context": "div"
+        },
         "email-input-field": {
             "context": "div"
         },
-        "example-directive2": {
+        "crud-button-group": {
             "context": "div"
+        },
+        "aria-expanded": {
+            "context": "button"
         }
+    },
+    "elements": {
+        "example-directive": {}
     }
 }

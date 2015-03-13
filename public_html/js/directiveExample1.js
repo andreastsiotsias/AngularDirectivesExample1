@@ -79,3 +79,31 @@ angular.module("directiveExample1").directive('passwordInputField',
                 }
         }
     });
+    
+angular.module("directiveExample1").directive('crudButtonGroup', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/CRUDButtonGroup.html',
+            replace: true,
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                console.log("In CRUDButtonGroup's controller");
+                $scope.createFunction = function () {
+                    alert("Create function called");
+                }
+                $scope.retrieveFunction = function () {
+                    alert("Retrieve function called");
+                }
+                $scope.updateFunction = function () {
+                    alert("Update function called");
+                }
+                $scope.deleteFunction = function () {
+                    alert("Delete function called");
+                }
+            },
+            link: function(scope, el, attr) {
+                console.log("In CRUDButtonGroup's link");
+            }
+        }
+    });
