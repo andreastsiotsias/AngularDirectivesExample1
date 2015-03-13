@@ -12,6 +12,9 @@
         "email-input-field": {
             "context": "div"
         },
+        "grid": {
+            "context": "div"
+        },
         "crud-button-group": {
             "context": "div"
         },

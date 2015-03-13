@@ -107,3 +107,48 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             }
         }
     });
+    
+angular.module("directiveExample1").directive('grid', 
+    function() {
+        return {
+            restrict: 'A',
+            replace: true,
+            template: '<div class="gridcontainer"</div>',
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                console.log("In dataGrid's controller");
+                $scope.gridOptions = {
+                    "autoBind": true,
+                    "columnMenu": true,
+                    "columns": [
+                        {"field": "col1", "title": "No Data To Display", "width": 140, "filterable": false}
+                    ],
+                    "dataSource" : {
+                        "batch": false,
+                        "pageSize": 15
+                    },
+                    "editable": {
+                        "mode": "popup"
+                    },
+                    "filterable": true,
+                    "groupable": false,
+                    "pageable": {
+                        "refresh": true,
+                        "pageSizes": [5, 10, 20, 100],
+                        "input": true
+                    },
+                    "resizable": true,
+                    "scrollable": true,
+                    "selectable": "row",
+                    "sortable": true,
+                    "toolbar": [
+                        {template: '<h4>Empty Dataset</h4>'}
+                    ]
+                };
+            },
+            link: function(scope, el, attr) {
+                console.log("In dataGrid's link");
+                el.kendoGrid(scope.gridOptions);
+                }
+        }
+    });
