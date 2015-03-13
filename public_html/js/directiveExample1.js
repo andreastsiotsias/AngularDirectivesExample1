@@ -53,11 +53,28 @@ angular.module("directiveExample1").directive('emailInputField',
             replace: true,
             scope: {},
             controller: function($scope, $element, utilityFunctions){
-                $scope.divid = utilityFunctions.guid();
+                $scope.rowid = utilityFunctions.guid();
                 console.log("In emailInputField's controller");
             },
             link: function(scope, el, attr) {
                 console.log("In emailInputField's link");
+                }
+        }
+    });
+    
+angular.module("directiveExample1").directive('passwordInputField', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/passwordInputField.html',
+            replace: true,
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                $scope.rowid = utilityFunctions.guid();
+                console.log("In passwordInputField's controller");
+            },
+            link: function(scope, el, attr) {
+                console.log("In passwordInputField's link");
                 }
         }
     });
