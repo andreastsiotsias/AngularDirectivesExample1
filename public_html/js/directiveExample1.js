@@ -71,6 +71,7 @@ angular.module("directiveExample1").directive('passwordInputField',
             scope: {},
             controller: function($scope, $element, utilityFunctions){
                 $scope.rowid = utilityFunctions.guid();
+                $scope.password = '1234567890';
                 console.log("In passwordInputField's controller");
             },
             link: function(scope, el, attr) {
