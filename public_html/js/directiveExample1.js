@@ -142,7 +142,7 @@ angular.module("directiveExample1").directive('grid',
                     "selectable": "row",
                     "sortable": true,
                     "toolbar": [
-                        {template: '<h4>Empty Dataset</h4>'}
+                        {template: '<nav class="navbar navbar-default" style="margin-bottom: 0px;min-height: 20px"></nav>'}
                     ]
                 };
             },
