@@ -89,6 +89,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             scope: {},
             controller: function($scope, $element, utilityFunctions){
                 console.log("In CRUDButtonGroup's controller");
+                $scope.rowid = utilityFunctions.guid();
                 $scope.createFunction = function () {
                     alert("Create function called");
                 }
@@ -113,10 +114,11 @@ angular.module("directiveExample1").directive('grid',
         return {
             restrict: 'A',
             replace: true,
-            template: '<div class="gridcontainer"</div>',
+            template: '<div id="{{gridid}}" class="gridcontainer"</div>',
             scope: {},
             controller: function($scope, $element, utilityFunctions){
                 console.log("In dataGrid's controller");
+                $scope.gridid = utilityFunctions.guid();
                 $scope.gridOptions = {
                     "autoBind": true,
                     "columnMenu": true,
@@ -149,6 +151,11 @@ angular.module("directiveExample1").directive('grid',
             link: function(scope, el, attr) {
                 console.log("In dataGrid's link");
                 el.kendoGrid(scope.gridOptions);
+                scope.grid = el;
+                scope.toolbar = el[0].querySelector('.k-grid-toolbar');
+               var createButton = document.createElement('Button');
+               createButton.textContent = 'Create';
+               scope.toolbar.appendChild(createButton);
                 }
         }
     });
