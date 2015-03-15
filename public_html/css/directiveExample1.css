@@ -15,3 +15,5 @@ input:required:valid {
     background-position: right top; 
     background-repeat: no-repeat; 
 }
+.navbar-default {margin: 0; background: #808080;}
+.navbar-in-grid {margin: 20; background: transparent;}

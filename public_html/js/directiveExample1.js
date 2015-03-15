@@ -110,7 +110,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
     });
     
 angular.module("directiveExample1").directive('grid', 
-    function() {
+    function($compile) {
         return {
             restrict: 'A',
             replace: true,
@@ -144,7 +144,7 @@ angular.module("directiveExample1").directive('grid',
                     "selectable": "row",
                     "sortable": true,
                     "toolbar": [
-                        {template: '<nav class="navbar navbar-default" style="margin-bottom: 0px;min-height: 20px"></nav>'}
+                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
                     ]
                 };
             },
@@ -152,10 +152,11 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In dataGrid's link");
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
-                scope.toolbar = el[0].querySelector('.k-grid-toolbar');
-               var createButton = document.createElement('Button');
-               createButton.textContent = 'Create';
-               scope.toolbar.appendChild(createButton);
-                }
+                scope.navbar = el[0].querySelector('.navbar-in-grid');
+                var crudElement = angular.element('<div crud-button-group></div>');
+                var compiledCRUDElement = $compile(crudElement);
+                compiledCRUDElement(scope);
+                $(scope.navbar).append(crudElement);
+            }
         }
     });
