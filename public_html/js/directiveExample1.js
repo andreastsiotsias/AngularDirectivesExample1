@@ -53,7 +53,7 @@ angular.module("directiveExample1").directive('emailInputField',
             replace: true,
             scope: {},
             controller: function($scope, $element, utilityFunctions){
-                $scope.rowid = utilityFunctions.guid();
+                $scope.fieldid = utilityFunctions.guid();
                 console.log("In emailInputField's controller");
             },
             link: function(scope, el, attr) {
@@ -70,8 +70,7 @@ angular.module("directiveExample1").directive('passwordInputField',
             replace: true,
             scope: {},
             controller: function($scope, $element, utilityFunctions){
-                $scope.rowid = utilityFunctions.guid();
-                $scope.password = '1234567890';
+                $scope.fieldid = utilityFunctions.guid();
                 console.log("In passwordInputField's controller");
             },
             link: function(scope, el, attr) {
@@ -86,21 +85,20 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             restrict: 'A',
             templateUrl: './templates/CRUDButtonGroup.html',
             replace: true,
-            scope: {},
+            scope: false,
             controller: function($scope, $element, utilityFunctions){
                 console.log("In CRUDButtonGroup's controller");
-                $scope.rowid = utilityFunctions.guid();
                 $scope.createFunction = function () {
-                    alert("Create function called");
+                    alert("Create function called from Grid: "+$scope.gridid);
                 }
                 $scope.retrieveFunction = function () {
-                    alert("Retrieve function called");
+                    alert("Retrieve function called from Grid: "+$scope.gridid);
                 }
                 $scope.updateFunction = function () {
-                    alert("Update function called");
+                    alert("Update function called from Grid: "+$scope.gridid);
                 }
                 $scope.deleteFunction = function () {
-                    alert("Delete function called");
+                    alert("Delete function called from Grid: "+$scope.gridid);
                 }
             },
             link: function(scope, el, attr) {
@@ -119,6 +117,8 @@ angular.module("directiveExample1").directive('grid',
             controller: function($scope, $element, utilityFunctions){
                 console.log("In dataGrid's controller");
                 $scope.gridid = utilityFunctions.guid();
+                $scope.gridTitle = "Data Set Not Specified";
+
                 $scope.gridOptions = {
                     "autoBind": true,
                     "columnMenu": true,
@@ -153,6 +153,12 @@ angular.module("directiveExample1").directive('grid',
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
                 scope.navbar = el[0].querySelector('.navbar-in-grid');
+                // create the NAVBAR title and attach it
+                var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline;padding-top: 25px;">{{gridTitle}}</h3>');
+                var compiledTitleElement = $compile(titleElement);
+                compiledTitleElement(scope);
+                $(scope.navbar).append(titleElement);
+                // create the CDRUD buttons and attach to the NAVBAR
                 var crudElement = angular.element('<div crud-button-group></div>');
                 var compiledCRUDElement = $compile(crudElement);
                 compiledCRUDElement(scope);
