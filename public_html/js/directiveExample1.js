@@ -152,6 +152,8 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In dataGrid's link");
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
+                // createNavbarControls();
+                // createModals();
                 scope.navbar = el[0].querySelector('.navbar-in-grid');
                 // create the NAVBAR title and attach it
                 var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline;padding-top: 25px;">{{gridTitle}}</h3>');
