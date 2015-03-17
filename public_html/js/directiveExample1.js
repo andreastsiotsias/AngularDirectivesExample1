@@ -186,6 +186,7 @@ angular.module("directiveExample1").directive('gridCreateModal',
             scope: false,
             controller: function($scope, $element, utilityFunctions){
                 console.log("In gridCreateModal's controller");
+                $scope.popupTitle = 'Creating Record - '+$scope.gridTitle;
             },
             link: function(scope, el, attr) {
                 console.log("In gridCreateModal's link");
