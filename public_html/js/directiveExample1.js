@@ -114,10 +114,10 @@ angular.module("directiveExample1").directive('grid',
         return {
             restrict: 'A',
             replace: true,
-            template: '<div id="{{gridid}}" class="gridcontainer"</div>',
+            template: '<div id="{{gridid}}"></div>',
             scope: {},
             controller: function($scope, $element, utilityFunctions){
-                console.log("In dataGrid's controller");
+                console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
 
@@ -151,9 +151,11 @@ angular.module("directiveExample1").directive('grid',
                 };
             },
             link: function(scope, el, attr) {
-                console.log("In dataGrid's link");
+                console.log("In Grid's link");
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
+                console.log('Grid parent height = '+$(scope.grid).parent().height());
+                console.log('Grid height = '+$(scope.grid).height());
                 // createNavbarControls();
                 // createModals();
                 scope.navbar = el[0].querySelector('.navbar-in-grid');
@@ -187,6 +189,10 @@ angular.module("directiveExample1").directive('gridCreateModal',
             controller: function($scope, $element, utilityFunctions){
                 console.log("In gridCreateModal's controller");
                 $scope.popupTitle = 'Creating Record - '+$scope.gridTitle;
+                $scope.saveCreate = function () {
+                    $($scope.createModal).modal('hide');
+                    //alert("Save in CREATE function called from Grid: "+$scope.gridid);
+                }
             },
             link: function(scope, el, attr) {
                 console.log("In gridCreateModal's link");

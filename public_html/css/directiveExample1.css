@@ -17,3 +17,13 @@ input:required:valid {
 }
 .navbar-default {margin: 0; background: #808080;}
 .navbar-in-grid {margin: 20; background: transparent;}
+.grid-container {
+    right:0px;
+    top: 300px;
+    bottom:0px;
+    left:0px;
+    overflow: hidden;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    position: absolute;
+}
