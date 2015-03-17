@@ -89,7 +89,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             controller: function($scope, $element, utilityFunctions){
                 console.log("In CRUDButtonGroup's controller");
                 $scope.createFunction = function () {
-                    alert("Create function called from Grid: "+$scope.gridid);
+                    //alert("Create function called from Grid: "+$scope.gridid);
+                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
+                    
                 }
                 $scope.retrieveFunction = function () {
                     alert("Retrieve function called from Grid: "+$scope.gridid);
@@ -165,6 +167,28 @@ angular.module("directiveExample1").directive('grid',
                 var compiledCRUDElement = $compile(crudElement);
                 compiledCRUDElement(scope);
                 $(scope.navbar).append(crudElement);
+                // create the gridCreateModal dialogue
+                var createModalElement = angular.element('<div grid-create-modal></div>');
+                var compiledGridCreateModalElement = $compile(createModalElement);
+                compiledGridCreateModalElement(scope);
+                $(scope.grid).append(createModalElement);
+                scope.createModal = createModalElement;
             }
+        }
+    });
+    
+angular.module("directiveExample1").directive('gridCreateModal', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/gridCreateModal.html',
+            replace: true,
+            scope: false,
+            controller: function($scope, $element, utilityFunctions){
+                console.log("In gridCreateModal's controller");
+            },
+            link: function(scope, el, attr) {
+                console.log("In gridCreateModal's link");
+                }
         }
     });
