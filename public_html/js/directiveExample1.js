@@ -121,7 +121,9 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
-                
+                $scope.createGrid = function (a,b) {
+                    $scope.initialiseGrid (a,b);
+                };
 
                 $scope.gridOptions = {
                     "autoBind": true,
@@ -148,62 +150,86 @@ angular.module("directiveExample1").directive('grid',
                     "selectable": "row",
                     "sortable": true,
                     "toolbar": [
-                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
-                    ]
+                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
+                    ],
+                    "title": "Empty data set"
                 };
             },
             link: function(scope, el, attr) {
                 console.log("In Grid's link");
-                el.kendoGrid(scope.gridOptions);
+                // initialise scope-wide variables
                 scope.grid = el;
-                // initialise some variables for resizing purposes
-                // first, compute the 'other elements' height
-                var otherElements = el.children().not(".k-grid-content");
-                var otherElementsHeight = 0;
-                otherElements.each(function(){
-                    otherElementsHeight += $(this).outerHeight();
-                });
-                // adjust otherElementsHeight ...... kludge
-                otherElementsHeight += 9;
-                //console.log("Other elements height = "+otherElementsHeight);
-                var dataArea = el.find(".k-grid-content");
-                //console.log("Grid Area starting height = "+$(dataArea).height());
-                var gridHeight = $(el).height();
-                dataArea.height(gridHeight - otherElementsHeight);
-                //console.log("grid area initially adjusted height = "+dataArea.height());
-                // deal with overall window resize events
-                window.addEventListener ("resize",resizeGrid);
+                // initialise directive-wide variables
+                var dataArea;
+                var otherElementsHeight;
                 //
-                // createNavbarControls();
-                // createModals();
-                scope.navbar = el[0].querySelector('.navbar-in-grid');
-                // create the NAVBAR title and attach it
-                var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline;padding-top: 25px;">{{gridTitle}}</h3>');
-                var compiledTitleElement = $compile(titleElement);
-                compiledTitleElement(scope);
-                $(scope.navbar).append(titleElement);
-                // create the CDRUD buttons and attach to the NAVBAR
-                var crudElement = angular.element('<div crud-button-group></div>');
-                var compiledCRUDElement = $compile(crudElement);
-                compiledCRUDElement(scope);
-                $(scope.navbar).append(crudElement);
-                // create the gridCreateModal dialogue
-                var createModalElement = angular.element('<div grid-create-modal></div>');
-                var compiledGridCreateModalElement = $compile(createModalElement);
-                compiledGridCreateModalElement(scope);
-                $(scope.grid).append(createModalElement);
-                scope.createModal = createModalElement;
+                // Grid initialisation function
+                scope.initialiseGrid = function (elem, gridConfig) {
+                    // 
+                    // create the KENDO grid
+                    elem.kendoGrid(gridConfig);
+                    // add the AST extra bits
+                    scope.gridTitle = gridConfig.title;
+                    createNavbarControls();
+                    createModals();
+                    // and make sure it fits snugly and adapts to window resizing
+                    initialiseResizeGrid();
+                };
+                //
+                // now call the grid initialisation
+                scope.initialiseGrid(scope.grid,scope.gridOptions);
+                //
+                // create the grid's NAVBAR and add the CRUD buttons and TITLE
+                function createNavbarControls () {
+                    scope.navbar = scope.grid[0].querySelector('.navbar-in-grid');
+                    // create the NAVBAR title and attach it
+                    var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline; bottom: 0px; margin-bottom: 2px; position: absolute; overflow: hidden">Data Set: {{gridTitle}}</h3>');
+                    var compiledTitleElement = $compile(titleElement);
+                    compiledTitleElement(scope);
+                    $(scope.navbar).append(titleElement);
+                    // create the CDRUD buttons and attach to the NAVBAR
+                    var crudElement = angular.element('<div crud-button-group></div>');
+                    var compiledCRUDElement = $compile(crudElement);
+                    compiledCRUDElement(scope);
+                    $(scope.navbar).append(crudElement);
+                };
+                //
+                // create the MODAL to go with the grid
+                function createModals () {
+                    var createModalElement = angular.element('<div grid-create-modal></div>');
+                    var compiledGridCreateModalElement = $compile(createModalElement);
+                    compiledGridCreateModalElement(scope);
+                    $(scope.grid).append(createModalElement);
+                    scope.createModal = createModalElement;
+                };
+                //
+                // initiliase variables for grid resize events and management
+                function initialiseResizeGrid () {
+                    // first, compute the 'other elements' height
+                    otherElements = scope.grid.children().not(".k-grid-content");
+                    otherElementsHeight = 0;
+                    otherElements.each(function(){
+                        otherElementsHeight += $(this).outerHeight();
+                    });
+                    // adjust otherElementsHeight ...... kludge ..... seems that adding 13 pixels to it makes it work OK ... Spooky !!!!!
+                    otherElementsHeight += 13;
+                    //console.log("Other elements height = "+otherElementsHeight);
+                    dataArea = scope.grid.find(".k-grid-content");
+                    resizeGrid();
+                    // deal with overall window resize events
+                    window.addEventListener ("resize",resizeGrid);
+                };
                 //
                 // ResizeGrid Function
                 function resizeGrid () {
                     //console.log ('Grid was resized');
-                    gridHeight = $(el).height();
-                    //console.log("New Grid element height = "+gridHeight);
+                    gridHeight = $(scope.grid).height();
+                    console.log("New Grid element height = "+gridHeight);
                     dataArea.height(gridHeight - otherElementsHeight);
-                    //console.log("Set dataArea height to : "+dataArea.height());
-                }
+                    console.log("Set dataArea height to : "+dataArea.height());
+                };
             }
-        }
+        };
     });
     
 angular.module("directiveExample1").directive('gridCreateModal', 
@@ -220,6 +246,47 @@ angular.module("directiveExample1").directive('gridCreateModal',
                     $($scope.createModal).modal('hide');
                     $($scope.grid).data("kendoGrid").destroy();
                     $($scope.grid).empty();
+                    console.log("Destroyed and emptied old grid .....");
+                    $scope.gridOptions = {
+                        dataSource: {
+                            type: "odata",
+                            transport: {
+                                read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                            },
+                            pageSize: 20
+                        },
+                        pageable: {
+                            refresh: true,
+                            pageSizes: true,
+                            buttonCount: 5
+                        },
+                        columns: [{
+                            field: "ContactName",
+                            title: "Contact Name",
+                            width: 200
+                        }, {
+                            field: "ContactTitle",
+                            title: "Contact Title"
+                        }, {
+                            field: "CompanyName",
+                            title: "Company Name"
+                        }, {
+                            field: "Country",
+                            width: 150
+                        }],
+                        "filterable": true,
+                        "groupable": false,
+                        "resizable": true,
+                        "scrollable": true,
+                        "selectable": "row",
+                        "sortable": true,
+                        "toolbar": [
+                            {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
+                        ],
+                        "title": "Contacts"
+                    };
+                    //$($scope.grid).kendoGrid($scope.gridOptions);
+                    $scope.createGrid($scope.grid,$scope.gridOptions);
                     console.log("Refreshed grid ..............");
                     //alert("Save in CREATE function called from Grid: "+$scope.gridid);
                 }
