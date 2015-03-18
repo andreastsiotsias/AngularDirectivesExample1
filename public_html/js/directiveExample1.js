@@ -1,6 +1,12 @@
 /**
  * This is the module definition
  */
+function resizeGrid () {
+    alert ('Window was resized');
+}
+
+window.addEventListener ("resize",resizeGrid);
+
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
 angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityFunctions',
@@ -149,6 +155,10 @@ angular.module("directiveExample1").directive('grid',
                         {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
                     ]
                 };
+                function resizeGrid () {
+                    console.log ('Grid was resized');
+                }
+                $element[0].addEventListener ("resize",resizeGrid);
             },
             link: function(scope, el, attr) {
                 console.log("In Grid's link");
