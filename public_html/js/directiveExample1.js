@@ -1,12 +1,12 @@
 /**
  * This is the module definition
  */
-function resizeGrid () {
-    alert ('Window was resized');
-}
-
-window.addEventListener ("resize",resizeGrid);
-
+//function resizeGrid () {
+//    alert ('Window was resized');
+//}
+//
+//window.addEventListener ("resize",resizeGrid);
+//
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
 angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityFunctions',
@@ -155,17 +155,19 @@ angular.module("directiveExample1").directive('grid',
                         {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
                     ]
                 };
-                function resizeGrid () {
-                    console.log ('Grid was resized');
-                }
-                $element[0].addEventListener ("resize",resizeGrid);
             },
             link: function(scope, el, attr) {
                 console.log("In Grid's link");
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
+                // deal with resize events
+                function resizeGrid () {
+                    console.log ('Grid was resized');
+                }
+                el[0].addEventListener ("resize",resizeGrid);
                 console.log('Grid parent height = '+$(scope.grid).parent().height());
-                console.log('Grid height = '+$(scope.grid).height());
+                var initialHeight=$(scope.grid).height();
+                console.log('Grid height = '+initialHeight);
                 // createNavbarControls();
                 // createModals();
                 scope.navbar = el[0].querySelector('.navbar-in-grid');
