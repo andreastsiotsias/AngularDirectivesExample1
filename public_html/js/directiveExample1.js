@@ -5,7 +5,7 @@
 //    alert ('Window was resized');
 //}
 //
-//window.addEventListener ("resize",resizeGrid);
+
 //
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
@@ -163,8 +163,21 @@ angular.module("directiveExample1").directive('grid',
                 // deal with resize events
                 function resizeGrid () {
                     console.log ('Grid was resized');
+                    var gridElement = scope.grid;
+                    dataArea = gridElement.find(".k-grid-content");
+                    gridHeight = gridElement.innerHeight();
+                    console.log("Retrieved gridElement.height = "+gridHeight);
+                    otherElements = gridElement.children().not(".k-grid-content");
+                    otherElementsHeight = 0;
+                    otherElements.each(function(){
+                        otherElementsHeight += $(this).outerHeight();
+                    });
+                    console.log("Other elements height = "+otherElementsHeight);
+                    dataArea.height(gridHeight - otherElementsHeight);
+                    console.log("Setting dataArea to : "+gridHeight - otherElementsHeight);
                 }
-                el[0].addEventListener ("resize",resizeGrid);
+                window.addEventListener ("resize",resizeGrid);
+                //el[0].addEventListener ("resize",resizeGrid);
                 console.log('Grid parent height = '+$(scope.grid).parent().height());
                 var initialHeight=$(scope.grid).height();
                 console.log('Grid height = '+initialHeight);
