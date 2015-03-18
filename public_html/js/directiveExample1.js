@@ -1,12 +1,7 @@
 /**
  * This is the module definition
  */
-//function resizeGrid () {
-//    alert ('Window was resized');
-//}
-//
 
-//
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
 angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityFunctions',
@@ -126,6 +121,7 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
+                
 
                 $scope.gridOptions = {
                     "autoBind": true,
@@ -222,7 +218,9 @@ angular.module("directiveExample1").directive('gridCreateModal',
                 $scope.popupTitle = 'Creating Record - '+$scope.gridTitle;
                 $scope.saveCreate = function () {
                     $($scope.createModal).modal('hide');
-                    $($scope.grid).data("kendoGrid").addRow();
+                    $($scope.grid).data("kendoGrid").destroy();
+                    $($scope.grid).empty();
+                    console.log("Refreshed grid ..............");
                     //alert("Save in CREATE function called from Grid: "+$scope.gridid);
                 }
             },
