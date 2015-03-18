@@ -222,6 +222,7 @@ angular.module("directiveExample1").directive('gridCreateModal',
                 $scope.popupTitle = 'Creating Record - '+$scope.gridTitle;
                 $scope.saveCreate = function () {
                     $($scope.createModal).modal('hide');
+                    $($scope.grid).data("kendoGrid").addRow();
                     //alert("Save in CREATE function called from Grid: "+$scope.gridid);
                 }
             },
