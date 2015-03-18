@@ -160,27 +160,24 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's link");
                 el.kendoGrid(scope.gridOptions);
                 scope.grid = el;
-                // deal with resize events
-                function resizeGrid () {
-                    console.log ('Grid was resized');
-                    var gridElement = scope.grid;
-                    dataArea = gridElement.find(".k-grid-content");
-                    gridHeight = gridElement.innerHeight();
-                    console.log("Retrieved gridElement.height = "+gridHeight);
-                    otherElements = gridElement.children().not(".k-grid-content");
-                    otherElementsHeight = 0;
-                    otherElements.each(function(){
-                        otherElementsHeight += $(this).outerHeight();
-                    });
-                    console.log("Other elements height = "+otherElementsHeight);
-                    dataArea.height(gridHeight - otherElementsHeight);
-                    console.log("Setting dataArea to : "+gridHeight - otherElementsHeight);
-                }
+                // initialise some variables for resizing purposes
+                // first, compute the 'other elements' height
+                var otherElements = el.children().not(".k-grid-content");
+                var otherElementsHeight = 0;
+                otherElements.each(function(){
+                    otherElementsHeight += $(this).outerHeight();
+                });
+                // adjust otherElementsHeight ...... kludge
+                otherElementsHeight += 9;
+                //console.log("Other elements height = "+otherElementsHeight);
+                var dataArea = el.find(".k-grid-content");
+                //console.log("Grid Area starting height = "+$(dataArea).height());
+                var gridHeight = $(el).height();
+                dataArea.height(gridHeight - otherElementsHeight);
+                //console.log("grid area initially adjusted height = "+dataArea.height());
+                // deal with overall window resize events
                 window.addEventListener ("resize",resizeGrid);
-                //el[0].addEventListener ("resize",resizeGrid);
-                console.log('Grid parent height = '+$(scope.grid).parent().height());
-                var initialHeight=$(scope.grid).height();
-                console.log('Grid height = '+initialHeight);
+                //
                 // createNavbarControls();
                 // createModals();
                 scope.navbar = el[0].querySelector('.navbar-in-grid');
@@ -200,6 +197,15 @@ angular.module("directiveExample1").directive('grid',
                 compiledGridCreateModalElement(scope);
                 $(scope.grid).append(createModalElement);
                 scope.createModal = createModalElement;
+                //
+                // ResizeGrid Function
+                function resizeGrid () {
+                    //console.log ('Grid was resized');
+                    gridHeight = $(el).height();
+                    //console.log("New Grid element height = "+gridHeight);
+                    dataArea.height(gridHeight - otherElementsHeight);
+                    //console.log("Set dataArea height to : "+dataArea.height());
+                }
             }
         }
     });
