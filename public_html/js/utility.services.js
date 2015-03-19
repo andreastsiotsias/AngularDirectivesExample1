@@ -16,11 +16,11 @@ angular.module('utility.services')
                 el.innerHTML = html;
                 return el;
             },
-            printObjectContents: function(obj) {
-                var keys = Object.keys(obj);
-                console.log("<------ Printing Object contents");
+            printObjectContents: function(object,objectName) {
+                var keys = Object.keys(object);
+                console.log("<------ Printing "+objectName+" contents");
                 for (var i = 0; i < keys.length; i++) {
-                    console.log("Object key : "+keys[i]+" value : "+obj[keys[i]]);
+                    console.log("Object key : "+keys[i]+" value : "+object[keys[i]]);
                 }
                 console.log("------->");
             },

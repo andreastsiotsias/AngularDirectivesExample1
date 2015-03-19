@@ -91,18 +91,21 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 console.log("In CRUDButtonGroup's controller");
                 $scope.createFunction = function () {
                     //alert("Create function called from Grid: "+$scope.gridid);
-                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
-                    
-                }
+                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true}); 
+                };
                 $scope.retrieveFunction = function () {
                     alert("Retrieve function called from Grid: "+$scope.gridid);
-                }
+                };
                 $scope.updateFunction = function () {
                     alert("Update function called from Grid: "+$scope.gridid);
-                }
+                };
                 $scope.deleteFunction = function () {
                     alert("Delete function called from Grid: "+$scope.gridid);
-                }
+                };
+                $scope.clearSelectionsFunction = function () {
+                    //alert("Clear function called from Grid: "+$scope.gridid);
+                    $scope.grid.data("kendoGrid").clearSelection();
+                };
             },
             link: function(scope, el, attr) {
                 console.log("In CRUDButtonGroup's link");
@@ -121,10 +124,18 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
+                $scope.isRowSelected = false;
+                $scope.selectedRowID = "";
+                $scope.selectedRowData = {};
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
                 };
-
+                // make this function 'local' so it can be invoked by the link function of the directive
+                printObject = function (a,b) {
+                    utilityFunctions.printObjectContents(a,b);
+                };
+                // 
+                //
                 $scope.gridOptions = {
                     "autoBind": true,
                     "columnMenu": true,
@@ -179,10 +190,42 @@ angular.module("directiveExample1").directive('grid',
                     createModals();
                     // and make sure it fits snugly and adapts to window resizing
                     initialiseResizeGrid();
+                    // add the row selection event handler
+                    $(scope.grid).data("kendoGrid").bind("change",gridSelection);
+                    // and reset the row selections
+                    scope.isRowSelected = false;
+                    scope.selectedRowID = "";
+                    scope.selectedRowData = {};
+                    //printObject($(scope.grid).data("kendoGrid").select(),"No selection");
                 };
                 //
                 // now call the grid initialisation
                 scope.initialiseGrid(scope.grid,scope.gridOptions);
+                //
+                // deal with selection in grid
+                function gridSelection (e) {
+                    selgrid = $(scope.grid).data("kendoGrid");
+                    selectedRow = selgrid.select();
+                    console.log("Grid row selection called");
+                    printObject(selectedRow,"Selected Row");
+                    if (selectedRow.length === 1) {
+                        selectedRowModel = selgrid.dataItem(selectedRow);
+                        //printObject(selectedRowModel,"Selected Row Data");
+                        scope.isRowSelected = true;
+                        scope.selectedRowData = angular.copy(selectedRowModel);
+                        delete scope.selectedRowData._events;
+                        delete scope.selectedRowData.__metadata;
+                        delete scope.selectedRowData.parent;
+                        //printObject(scope.selectedRowData,"scope.selectedRowData");
+                        scope.selectedRowID = scope.selectedRowData.uid;
+                        console.log("Selected row uid: "+scope.selectedRowID);
+                    }
+                    else {
+                        scope.isRowSelected = false;
+                        scope.selectedRowData = {};
+                        scope.selectedRowID = "";
+                    }
+                }
                 //
                 // create the grid's NAVBAR and add the CRUD buttons and TITLE
                 function createNavbarControls () {
