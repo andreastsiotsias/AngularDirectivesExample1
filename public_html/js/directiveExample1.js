@@ -94,13 +94,17 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true}); 
                 };
                 $scope.retrieveFunction = function () {
-                    alert("Retrieve function called from Grid: "+$scope.gridid);
+                    alert("Retrieve function called on row: "+$scope.selectedRowID);
+                };
+                $scope.checkRetrieveButton = function () {
+                    console.log ("check retrieve button was polled");
+                    return true;
                 };
                 $scope.updateFunction = function () {
-                    alert("Update function called from Grid: "+$scope.gridid);
+                    alert("Update function called on row: "+$scope.selectedRowID);
                 };
                 $scope.deleteFunction = function () {
-                    alert("Delete function called from Grid: "+$scope.gridid);
+                    alert("Delete function called on row: "+$scope.selectedRowID);
                 };
                 $scope.clearSelectionsFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
@@ -137,8 +141,6 @@ angular.module("directiveExample1").directive('grid',
                 // 
                 //
                 $scope.gridOptions = {
-                    "autoBind": true,
-                    "columnMenu": true,
                     "columns": [
                         {"field": "col1", "title": "No Data To Display", "width": 140, "filterable": false}
                     ],
@@ -146,23 +148,6 @@ angular.module("directiveExample1").directive('grid',
                         "batch": false,
                         "pageSize": 15
                     },
-                    "editable": {
-                        "mode": "popup"
-                    },
-                    "filterable": true,
-                    "groupable": false,
-                    "pageable": {
-                        "refresh": true,
-                        "pageSizes": [5, 10, 20, 100],
-                        "input": true
-                    },
-                    "resizable": true,
-                    "scrollable": true,
-                    "selectable": "row",
-                    "sortable": true,
-                    "toolbar": [
-                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
-                    ],
                     "title": "Empty data set"
                 };
             },
@@ -184,23 +169,43 @@ angular.module("directiveExample1").directive('grid',
                     constrainGrid(gridConfig);
                     // create the KENDO grid
                     elem.kendoGrid(gridConfig);
-                    
+                    // set the title from the grid configuration array
                     scope.gridTitle = gridConfig.title;
                     createNavbarControls();
                     createModals();
                     // and make sure it fits snugly and adapts to window resizing
                     initialiseResizeGrid();
+                    // manage the pager reset button events
+                    manageResetPagerButton();
                     // add the row selection event handler
+                    manageRowSelectionEvents();
+                };
+                //
+                // now call the grid initialisation
+                scope.initialiseGrid(scope.grid,scope.gridOptions);
+                //
+                // initialise the grid row selection event management
+                function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
                     // and reset the row selections
                     scope.isRowSelected = false;
                     scope.selectedRowID = "";
                     scope.selectedRowData = {};
-                    //printObject($(scope.grid).data("kendoGrid").select(),"No selection");
-                };
+                }
                 //
-                // now call the grid initialisation
-                scope.initialiseGrid(scope.grid,scope.gridOptions);
+                // initialise the reset on pager button event management
+                function manageResetPagerButton () {
+                    scope.pagerRefreshButton = scope.grid[0].querySelector('.k-pager-refresh');
+                    $(scope.pagerRefreshButton).bind("click",pagerRefreshClicked);
+                }
+                //
+                // reset on pager button click handler - resets grid selection variables
+                function pagerRefreshClicked () {
+                    console.log ("Refresh was clicked");
+                    scope.isRowSelected = false;
+                    scope.selectedRowID = "";
+                    scope.selectedRowData = {};
+                }
                 //
                 // deal with selection in grid
                 function gridSelection (e) {
@@ -224,6 +229,7 @@ angular.module("directiveExample1").directive('grid',
                         scope.isRowSelected = false;
                         scope.selectedRowData = {};
                         scope.selectedRowID = "";
+                        console.log("Deselected Row");
                     }
                 }
                 //
@@ -341,11 +347,6 @@ angular.module("directiveExample1").directive('gridCreateModal',
                             },
                             pageSize: 20
                         },
-                        pageable: {
-                            refresh: true,
-                            pageSizes: true,
-                            buttonCount: 5
-                        },
                         columns: [{
                             field: "ContactName",
                             title: "Contact Name",
@@ -360,15 +361,6 @@ angular.module("directiveExample1").directive('gridCreateModal',
                             field: "Country",
                             width: 150
                         }],
-                        "filterable": true,
-                        "groupable": false,
-                        "resizable": true,
-                        "scrollable": true,
-                        "selectable": "row",
-                        "sortable": true,
-                        "toolbar": [
-                            {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px;min-height: 20px"></nav>'}
-                        ],
                         "title": "Contacts"
                     };
                     //$($scope.grid).kendoGrid($scope.gridOptions);
