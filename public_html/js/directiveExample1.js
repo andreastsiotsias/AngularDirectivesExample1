@@ -165,10 +165,15 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // Grid initialisation function
                 scope.initialiseGrid = function (elem, gridConfig) {
-                    // 
+                    //
+                    // constrain some of the grid options
+                    // to ensure we get a consistent look & feel and
+                    // that some key elements and behaviour is
+                    // guaranteed
+                    constrainGrid(gridConfig);
                     // create the KENDO grid
                     elem.kendoGrid(gridConfig);
-                    // add the AST extra bits
+                    
                     scope.gridTitle = gridConfig.title;
                     createNavbarControls();
                     createModals();
@@ -228,6 +233,44 @@ angular.module("directiveExample1").directive('grid',
                     dataArea.height(gridHeight - otherElementsHeight);
                     console.log("Set dataArea height to : "+dataArea.height());
                 };
+                //
+                // Constrain / Adjust Grid Options
+                function constrainGrid (gridConfig) {
+                    if (!gridConfig.title) {
+                        gridConfig.title = 'Data Set: Unspecified';
+                    }
+                    gridConfig.allowCopy = true; // allow copy to clipboard
+                    gridConfig.autoBind = true;  // bind to datasource automatically
+                    gridConfig.columnResizeHandleWidth = 5; // set the column grasp handle to 5 pixels
+                    gridConfig.columnMenu = true;  // show the column functions twistie (filtering, sorting, etc.)
+                    gridConfig.editable = false;  // disable the default editing of fields/rows - we do our own
+                    gridConfig.filterable = true;  // allow filtering of data
+                    gridConfig.filterable.mode = "menu";  // force filtering to popup a menu
+                    gridConfig.groupable = false;  // prevent grouping of values - screws up formatting
+                    gridConfig.mobile = false;  // switch off adaptive rendering for the time being
+                    gridConfig.navigatable = false;  // disable keyboard navigation - it's not required (yet)
+                    gridConfig.pageable = {
+                        refresh: true,
+                        messages: {
+                            refresh: "Reload Data Set",
+                            display: "Showing {0} to {1} from {2} records",
+                            empty: "No records to display",
+                            itemsPerPage: "records per page"
+                        },
+                        info: true,
+                        pageSizes: [5,10,20,100],
+                        pageSize: 10,
+                        buttonCount: 3,
+                        input: true
+                    };                           // show pager at bottom and set defaults for it
+                    gridConfig.reorderable = false;  // prevent user from reordering the columns
+                    gridConfig.resizable = true;  // allow resizing of columns
+                    gridConfig.scrollable = true;  // enable scrolling when the rows exceed visible area
+                    gridConfig.sortable = true;  // allow sorting by clicking on column headers
+                    gridConfig.toolbar = [
+                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
+                    ];
+                }
             }
         };
     });
