@@ -1,6 +1,7 @@
-<div class="btn-group btn-default navbar-right" style="padding-right: 20px;background: transparent">
-    <button type="button" class="btn btn-info grid-create-button" ng-click="createFunction()">Create New Record</button>
-    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+<div class="btn-group btn-default navbar-right" style="margin-right: 10px;background: transparent">
+    <button type="button" class="btn btn-success" ng-disabled="!isDatasourceDirty" ng-click="commitChanges()">Commit Changes</button>
+    <button type="button" class="btn btn-success grid-create-button" ng-click="createFunction()">Create New Record</button>
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>

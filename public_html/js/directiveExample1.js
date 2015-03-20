@@ -95,6 +95,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateLink = null;
                 $scope.deleteLink = null;
                 $scope.clearLink = null;
+                $scope.isDatasourceDirty = false;
                 //
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
@@ -137,6 +138,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
+                    var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID);
+                    columnName = "ContactName";
+                    columnValue = "Andreas Stylianos Tsiotsias";
+                    dataRow.set(columnName, columnValue);
+                    dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
                 };
                 //
@@ -155,7 +161,10 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     if (confirm("Are you sure ?")) {
                         var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
                         $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
+                        dataRow.dirty = true;
+                        printObject(dataRow,"Data Row");
                         $scope.clearSelectionsFunction();
+                        $scope.isDatasourceDirty = true;
                     }
                 };
                 //
@@ -182,6 +191,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         $scope.clearLink.hide();
                     }
                 };
+                //
+                $scope.commitChanges = function () {
+                    $scope.grid.data("kendoGrid").dataSource.sync();
+                    $scope.isDatasourceDirty = false ;
+                }
                 //
                 $scope.fireButtonCheckers = function () {
                     //console.log ("Firing button checkers");
