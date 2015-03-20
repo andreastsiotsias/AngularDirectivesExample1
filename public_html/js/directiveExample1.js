@@ -98,7 +98,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
-                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true}); 
+                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
+                    $scope.clearSelectionsFunction();
                 };
                 //
                 $scope.checkCreateButton = function () {
@@ -136,6 +137,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
+                    $scope.clearSelectionsFunction();
                 };
                 //
                 $scope.checkUpdateLink = function () {
@@ -148,7 +150,13 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 };
                 //
                 $scope.deleteFunction = function () {
-                    console.log("Delete function called on row: "+$scope.selectedRowID);
+                    var uid = $scope.selectedRowID;
+                    console.log("Delete function called on row: "+uid);
+                    if (confirm("Are you sure ?")) {
+                        var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
+                        $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
+                        $scope.clearSelectionsFunction();
+                    }
                 };
                 //
                 $scope.checkDeleteLink = function () {
@@ -158,6 +166,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     else {
                         $scope.deleteLink.hide();
                     }
+                };
+                //
+                $scope.clearSelectionsFunction = function () {
+                    //alert("Clear function called from Grid: "+$scope.gridid);
+                    $scope.grid.data("kendoGrid").clearSelection();
                 };
                 //
                 $scope.checkClearLink = function () {
@@ -180,10 +193,6 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.checkClearLink();
                 };
                 //
-                $scope.clearSelectionsFunction = function () {
-                    //alert("Clear function called from Grid: "+$scope.gridid);
-                    $scope.grid.data("kendoGrid").clearSelection();
-                };
                 $scope.loadNewGrid = function () {
                     console.log ("Loading sample new grid");
                     $($scope.grid).data("kendoGrid").destroy();
