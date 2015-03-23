@@ -96,6 +96,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.deleteLink = null;
                 $scope.clearLink = null;
                 $scope.isDatasourceDirty = false;
+                $scope.isRowSelected = false;
                 //
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
@@ -103,38 +104,38 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.clearSelectionsFunction();
                 };
                 //
-                $scope.checkCreateButton = function () {
-                    if ($scope.gridOptions.createAllowed) {
-                        $scope.createButton.prop("disabled", false);
-                    }
-                    else {
-                        $scope.createButton.prop("disabled", true);
-                    }
-                };
+//                $scope.checkCreateButton = function () {
+//                    if ($scope.gridOptions.createAllowed) {
+//                        $scope.createButton.prop("disabled", false);
+//                    }
+//                    else {
+//                        $scope.createButton.prop("disabled", true);
+//                    }
+//                };
                 //
-                $scope.checkCreateLink = function () {
-                    if ($scope.gridOptions.createAllowed) {
-                        $scope.createLink.show();
-                    }
-                    else {
-                        $scope.createLink.hide();
-                    }
-                };
+//                $scope.checkCreateLink = function () {
+//                    if ($scope.gridOptions.createAllowed) {
+//                        $scope.createLink.show();
+//                    }
+//                    else {
+//                        $scope.createLink.hide();
+//                    }
+//                };
                 //
                 $scope.retrieveFunction = function () {
                     console.log("Retrieve function called on row: "+$scope.selectedRowID);
                 };
                 //
-                $scope.checkRetrieveLink = function () {
-                    //console.log ("check retrieve button was polled - it has value: "+$scope.isRowSelected);
-                    if ($scope.isRowSelected && $scope.gridOptions.retrieveAllowed) {
-                        $scope.retrieveLink.show();
-                    }
-                    else {
-                        //console.log ("--> Retrieve FALSE");
-                        $scope.retrieveLink.hide();
-                    }     
-                };
+//                $scope.checkRetrieveLink = function () {
+//                   //console.log ("check retrieve button was polled - it has value: "+$scope.isRowSelected);
+//                    if ($scope.isRowSelected && $scope.gridOptions.retrieveAllowed) {
+//                        $scope.retrieveLink.show();
+//                    }
+//                    else {
+//                        //console.log ("--> Retrieve FALSE");
+//                        $scope.retrieveLink.hide();
+//                    }     
+//                };
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
@@ -146,14 +147,14 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.clearSelectionsFunction();
                 };
                 //
-                $scope.checkUpdateLink = function () {
-                    if ($scope.isRowSelected && $scope.gridOptions.updateAllowed) {
-                        $scope.updateLink.show();
-                    }
-                    else {
-                        $scope.updateLink.hide();
-                    }
-                };
+//                $scope.checkUpdateLink = function () {
+//                    if ($scope.isRowSelected && $scope.gridOptions.updateAllowed) {
+//                        $scope.updateLink.show();
+//                    }
+//                    else {
+//                        $scope.updateLink.hide();
+//                    }
+//                };
                 //
                 $scope.deleteFunction = function () {
                     var uid = $scope.selectedRowID;
@@ -168,14 +169,14 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     }
                 };
                 //
-                $scope.checkDeleteLink = function () {
-                    if ($scope.isRowSelected && $scope.gridOptions.deleteAllowed) {
-                        $scope.deleteLink.show();
-                    }
-                    else {
-                        $scope.deleteLink.hide();
-                    }
-                };
+//                $scope.checkDeleteLink = function () {
+//                    if ($scope.isRowSelected && $scope.gridOptions.deleteAllowed) {
+//                        $scope.deleteLink.show();
+//                    }
+//                    else {
+//                        $scope.deleteLink.hide();
+//                    }
+//                };
                 //
                 $scope.clearSelectionsFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
@@ -199,12 +200,12 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.fireButtonCheckers = function () {
                     //console.log ("Firing button checkers");
-                    $scope.checkCreateButton();
-                    $scope.checkCreateLink();
-                    $scope.checkRetrieveLink();
-                    $scope.checkUpdateLink();
-                    $scope.checkDeleteLink();
-                    $scope.checkClearLink();
+//                    $scope.checkCreateButton();
+//                    $scope.checkCreateLink();
+//                    $scope.checkRetrieveLink();
+//                    $scope.checkUpdateLink();
+//                    $scope.checkDeleteLink();
+//                    $scope.checkClearLink();
                 };
                 //
                 $scope.loadNewGrid = function () {
@@ -272,7 +273,7 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
-                $scope.isRowSelected = false;
+//                $scope.isRowSelected = false;
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
                 $scope.createGrid = function (a,b) {

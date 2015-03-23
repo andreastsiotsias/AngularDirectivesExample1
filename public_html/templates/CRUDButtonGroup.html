@@ -1,16 +1,16 @@
 <div class="btn-group btn-default navbar-right" style="margin-right: 10px;background: transparent">
     <button type="button" class="btn btn-success" ng-disabled="!isDatasourceDirty" ng-click="commitChanges()">Commit Changes</button>
-    <button type="button" class="btn btn-success grid-create-button" ng-click="createFunction()">Create New Record</button>
+    <button type="button" class="btn btn-success grid-create-button" ng-click="createFunction()" ng-disabled="!gridOptions.createAllowed">Create New Record</button>
     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
     <ul class="dropdown-menu" role="menu">
-        <li class="grid-create-link"><a href="#" ng-click="createFunction()">Create New Record</a></li>
-        <li class="grid-retrieve-link"><a href="#" ng-click="retrieveFunction()">Retrieve Full Record</a></li>
-        <li class="grid-update-link"><a href="#" ng-click="updateFunction()">Update Selected Record</a></li>
-        <li class="grid-delete-link"><a href="#" ng-click="deleteFunction()">Delete Selected Record</a></li>
-        <li class="grid-clear-link"><a href="#" ng-click="clearSelectionsFunction()">Clear Selections</a></li>
+        <li class="grid-create-link"><a href="#" ng-click="createFunction()" ng-show="gridOptions.createAllowed">Create New Record</a></li>
+        <li class="grid-retrieve-link"><a href="#" ng-click="retrieveFunction()" ng-show="gridOptions.retrieveAllowed">Retrieve Full Record</a></li>
+        <li class="grid-update-link"><a href="#" ng-click="updateFunction()" ng-show="isRowSelected">Update Selected Record</a></li>
+        <li class="grid-delete-link"><a href="#" ng-click="deleteFunction()" ng-show="isRowSelected">Delete Selected Record</a></li>
+        <li class="grid-clear-link"><a href="#" ng-click="clearSelectionsFunction()" ng-show="isRowSelected">Clear Selections</a></li>
         <li><a href="#" ng-click="loadNewGrid()">Load Sample Grid</a></li>
     </ul>
 </div>
