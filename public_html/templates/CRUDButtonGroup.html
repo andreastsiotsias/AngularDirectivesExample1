@@ -1,4 +1,6 @@
 <div class="btn-group btn-default navbar-right" style="padding-right: 20px;background: transparent">
+    <button type="button" class="btn btn-info grid-save-button" ng-click="saveFunction()"
+            ng-disabled="!gridIsDirty">Save All Changes</button>
     <button type="button" class="btn btn-info grid-create-button" ng-click="createFunction()"
             ng-disabled="!gridOptions.createAllowed">Create New Record</button>
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -9,12 +11,12 @@
         <li class="grid-create-link"><a href="#" ng-click="createFunction()"
             ng-show="gridOptions.createAllowed">Create New Record</a></li>
         <li class="grid-retrieve-link"><a href="#" ng-click="retrieveFunction()"
-            ng-show="gridOptions.retrieveAllowed">Retrieve Full Record</a></li>
+            ng-show="gridOptions.retrieveAllowed && isRowSelected">Retrieve Full Record</a></li>
         <li class="grid-update-link"><a href="#" ng-click="updateFunction()"
-            ng-show="gridOptions.updateAllowed">Update Selected Record</a></li>
+            ng-show="gridOptions.updateAllowed && isRowSelected">Update Selected Record</a></li>
         <li class="divider" ng-show="gridOptions.deleteAllowed"></li>
         <li class="grid-delete-link"><a href="#" ng-click="deleteFunction()"
-            ng-show="gridOptions.deleteAllowed">Delete Selected Record</a></li>
+            ng-show="gridOptions.deleteAllowed && isRowSelected">Delete Selected Record</a></li>
         <li class="divider" ng-show="gridOptions.deleteAllowed"></li>
         <li class="grid-clear-link"><a href="#" ng-click="clearSelectionsFunction()"
             ng-show="isRowSelected">Clear Selections</a></li>

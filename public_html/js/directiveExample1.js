@@ -99,6 +99,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
                     $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
+                    $scope.gridIsDirty = true;
                     $scope.clearSelectionsFunction();
                 };
                 //
@@ -137,6 +138,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
+                    $scope.gridIsDirty = true;
                     $scope.clearSelectionsFunction();
                 };
                 //
@@ -156,6 +158,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
                         $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         $scope.clearSelectionsFunction();
+                        $scope.gridIsDirty = true;
                     }
                 };
                 //
@@ -184,6 +187,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     else {
                         $scope.clearLink.hide();
                     }
+                };
+                //
+                $scope.saveFunction = function () {
+                    //alert("Clear function called from Grid: "+$scope.gridid);
+                    $scope.gridIsDirty = false;
                 };
                 //
                 $scope.fireButtonCheckers = function () {
@@ -261,6 +269,7 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
+                $scope.gridIsDirty = false;
                 $scope.isRowSelected = false;
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
@@ -342,6 +351,7 @@ angular.module("directiveExample1").directive('grid',
                 function pagerRefreshClicked () {
                     console.log ("Refresh was clicked");
                     scope.$apply (function() {
+                        scope.gridIsDirty = false;
                         scope.isRowSelected = false;
                         scope.selectedRowID = "";
                         scope.selectedRowData = {};
