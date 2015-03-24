@@ -235,6 +235,7 @@ angular.module("directiveExample1").directive('grid',
                 // initialise directive-wide variables
                 var dataArea;
                 var otherElementsHeight;
+                var gridDataSource;
                 //
                 // Grid initialisation function
                 scope.initialiseGrid = function (elem, gridConfig) {
@@ -256,6 +257,8 @@ angular.module("directiveExample1").directive('grid',
                     manageResetPagerButton();
                     // add the row selection event handler
                     manageRowSelectionEvents();
+                    // add the grid datasource change events handler
+                    manageGridDataSourceChange();
                 };
                 //
                 // now call the grid initialisation
@@ -270,6 +273,11 @@ angular.module("directiveExample1").directive('grid',
                     //    scope.selectedRowID = "";
                     //    scope.selectedRowData = {};
                     //});
+                }
+                //
+                // initialise the grid data source change event management
+                function manageGridDataSourceChange () {
+                    gridDataSource = $(scope.grid).data("kendoGrid").dataSource.bind("change",gridDataSourceChange);
                 }
                 //
                 // initialise the reset on pager button event management
@@ -404,6 +412,20 @@ angular.module("directiveExample1").directive('grid',
                     gridConfig.toolbar = [
                         {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
                     ];
+                }
+                //
+                // capture and process data source change events
+                function gridDataSourceChange (evt) {
+                    console.log ("------> Grid Data Source changed");
+                    if (! evt.action) {
+                        // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
+                        console.log ("       Looks like a grid pager event");
+                        scope.$apply (function() {
+                            scope.isRowSelected = false;
+                            scope.selectedRowData = {};
+                            scope.selectedRowID = "";
+                        });
+                    }
                 }
             }
         };
