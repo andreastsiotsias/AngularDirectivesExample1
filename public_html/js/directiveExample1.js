@@ -95,6 +95,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateLink = null;
                 $scope.deleteLink = null;
                 $scope.clearLink = null;
+                $scope.isDatasourceDirty = false;
+                $scope.isRowSelected = false;
                 //
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
@@ -103,53 +105,58 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.clearSelectionsFunction();
                 };
                 //
-                $scope.checkCreateButton = function () {
-                    if ($scope.gridOptions.createAllowed) {
-                        $scope.createButton.prop("disabled", false);
-                    }
-                    else {
-                        $scope.createButton.prop("disabled", true);
-                    }
-                };
+//                $scope.checkCreateButton = function () {
+//                    if ($scope.gridOptions.createAllowed) {
+//                        $scope.createButton.prop("disabled", false);
+//                    }
+//                    else {
+//                        $scope.createButton.prop("disabled", true);
+//                    }
+//                };
                 //
-                $scope.checkCreateLink = function () {
-                    if ($scope.gridOptions.createAllowed) {
-                        $scope.createLink.show();
-                    }
-                    else {
-                        $scope.createLink.hide();
-                    }
-                };
+//                $scope.checkCreateLink = function () {
+//                    if ($scope.gridOptions.createAllowed) {
+//                        $scope.createLink.show();
+//                    }
+//                    else {
+//                        $scope.createLink.hide();
+//                    }
+//                };
                 //
                 $scope.retrieveFunction = function () {
                     console.log("Retrieve function called on row: "+$scope.selectedRowID);
                 };
                 //
-                $scope.checkRetrieveLink = function () {
-                    //console.log ("check retrieve button was polled - it has value: "+$scope.isRowSelected);
-                    if ($scope.isRowSelected && $scope.gridOptions.retrieveAllowed) {
-                        $scope.retrieveLink.show();
-                    }
-                    else {
-                        //console.log ("--> Retrieve FALSE");
-                        $scope.retrieveLink.hide();
-                    }     
-                };
+//                $scope.checkRetrieveLink = function () {
+//                   //console.log ("check retrieve button was polled - it has value: "+$scope.isRowSelected);
+//                    if ($scope.isRowSelected && $scope.gridOptions.retrieveAllowed) {
+//                        $scope.retrieveLink.show();
+//                    }
+//                    else {
+//                        //console.log ("--> Retrieve FALSE");
+//                        $scope.retrieveLink.hide();
+//                    }     
+//                };
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
                     $scope.gridIsDirty = true;
+                    var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID);
+                    columnName = "ContactName";
+                    columnValue = "Andreas Stylianos Tsiotsias";
+                    dataRow.set(columnName, columnValue);
+                    dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
                 };
                 //
-                $scope.checkUpdateLink = function () {
-                    if ($scope.isRowSelected && $scope.gridOptions.updateAllowed) {
-                        $scope.updateLink.show();
-                    }
-                    else {
-                        $scope.updateLink.hide();
-                    }
-                };
+//                $scope.checkUpdateLink = function () {
+//                    if ($scope.isRowSelected && $scope.gridOptions.updateAllowed) {
+//                        $scope.updateLink.show();
+//                    }
+//                    else {
+//                        $scope.updateLink.hide();
+//                    }
+//                };
                 //
                 $scope.deleteFunction = function () {
                     var uid = $scope.selectedRowID;
@@ -157,19 +164,22 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     if (confirm("Are you sure ?")) {
                         var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
                         $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
+                        dataRow.dirty = true;
+                        printObject(dataRow,"Data Row");
                         $scope.clearSelectionsFunction();
                         $scope.gridIsDirty = true;
+                        $scope.isDatasourceDirty = true;
                     }
                 };
                 //
-                $scope.checkDeleteLink = function () {
-                    if ($scope.isRowSelected && $scope.gridOptions.deleteAllowed) {
-                        $scope.deleteLink.show();
-                    }
-                    else {
-                        $scope.deleteLink.hide();
-                    }
-                };
+//                $scope.checkDeleteLink = function () {
+//                    if ($scope.isRowSelected && $scope.gridOptions.deleteAllowed) {
+//                        $scope.deleteLink.show();
+//                    }
+//                    else {
+//                        $scope.deleteLink.hide();
+//                    }
+//                };
                 //
                 $scope.clearSelectionsFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
@@ -193,6 +203,10 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.gridIsDirty = false;
                 };
+                $scope.commitChanges = function () {
+                    $scope.grid.data("kendoGrid").dataSource.sync();
+                    $scope.isDatasourceDirty = false ;
+                }
                 //
                 $scope.fireButtonCheckers = function () {
                     //console.log ("Firing button checkers");
@@ -269,8 +283,6 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
-                $scope.gridIsDirty = false;
-                $scope.isRowSelected = false;
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
                 $scope.createGrid = function (a,b) {
