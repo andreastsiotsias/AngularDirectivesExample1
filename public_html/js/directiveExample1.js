@@ -176,7 +176,8 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
-                $scope.isRowSelected = false;
+                $scope.areRowsSelected = false;
+                $scope.rowsSelected = 0;
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
                 $scope.gridIsDirty = false;
@@ -208,9 +209,13 @@ angular.module("directiveExample1").directive('grid',
                 // initialise scope-wide variables
                 scope.grid = el;
                 // initialise directive-wide variables
+                var gridHeight;
                 var dataArea;
+                var otherElements;
                 var otherElementsHeight;
                 var gridDataSource;
+                var selgrid;
+                var selectedRow;
                 //
                 // Grid initialisation function
                 scope.initialiseGrid = function (elem, gridConfig) {
@@ -259,7 +264,8 @@ angular.module("directiveExample1").directive('grid',
                 function pagerRefreshClicked () {
                     scope.$apply (function() {
                         scope.gridIsDirty = false;
-                        scope.isRowSelected = false;
+                        scope.areRowsSelected = false;
+                        $scope.rowsSelected = 0;
                         scope.selectedRowID = "";
                         scope.selectedRowData = {};
                     });
@@ -269,10 +275,12 @@ angular.module("directiveExample1").directive('grid',
                 function gridSelection (e) {
                     selgrid = $(scope.grid).data("kendoGrid");
                     selectedRow = selgrid.select();
+                        
                     if (selectedRow.length === 1) {
-                        selectedRowModel = selgrid.dataItem(selectedRow);
+                        var selectedRowModel = selgrid.dataItem(selectedRow);
                         scope.$apply (function() {
-                            scope.isRowSelected = true;
+                            scope.areRowsSelected = true;
+                            scope.rowsSelected = selectedRow.length;
                             scope.selectedRowData = angular.copy(selectedRowModel);
                             delete scope.selectedRowData._events;
                             delete scope.selectedRowData.__metadata;
@@ -280,8 +288,15 @@ angular.module("directiveExample1").directive('grid',
                             scope.selectedRowID = scope.selectedRowData.uid;
                         });
                     }
+                    else if (selectedRow.length > 1) {
+                        scope.$apply (function() {
+                            scope.areRowsSelected = true;
+                            scope.rowsSelected = selectedRow.length;
+                        });
+                    }
                     else {
-                        scope.isRowSelected = false;
+                        scope.areRowsSelected = false;
+                        scope.rowsSelected = 0;
                         scope.selectedRowData = {};
                         scope.selectedRowID = "";
                     }
@@ -365,7 +380,7 @@ angular.module("directiveExample1").directive('grid',
                     gridConfig.reorderable = false;  // prevent user from reordering the columns
                     gridConfig.resizable = true;  // allow resizing of columns
                     gridConfig.scrollable = true;  // enable scrolling when the rows exceed visible area
-                    gridConfig.selectable = "row";  // enable row selection in grid
+                    gridConfig.selectable = "multiple";  // enable row selection in grid
                     gridConfig.sortable = true;  // allow sorting by clicking on column headers
                     gridConfig.toolbar = [
                         {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
@@ -377,7 +392,8 @@ angular.module("directiveExample1").directive('grid',
                     if (! evt.action) {
                         // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
                         scope.$apply (function() {
-                            scope.isRowSelected = false;
+                            scope.areRowsSelected = false;
+                            scope.rowsSelected = 0;
                             scope.selectedRowData = {};
                             scope.selectedRowID = "";
                         });
