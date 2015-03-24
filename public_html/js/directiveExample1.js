@@ -89,54 +89,23 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             scope: false,
             controller: function($scope, $element, utilityFunctions){
                 console.log("In CRUDButtonGroup's controller");
-                $scope.createButton = null;
-                $scope.createLink = null;
-                $scope.retrieveLink = null;
-                $scope.updateLink = null;
-                $scope.deleteLink = null;
-                $scope.clearLink = null;
-                $scope.isDatasourceDirty = false;
-                $scope.isRowSelected = false;
+//                $scope.createButton = null;
+//                $scope.createLink = null;
+//                $scope.retrieveLink = null;
+//                $scope.updateLink = null;
+//                $scope.deleteLink = null;
+//                $scope.clearLink = null;
+//                $scope.isDatasourceDirty = false;
+//                $scope.isRowSelected = false;
                 //
                 $scope.createFunction = function () {
                     console.log("Create function called from Grid: "+$scope.gridid);
                     $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
-                    $scope.gridIsDirty = true;
-                    $scope.clearSelectionsFunction();
                 };
-                //
-//                $scope.checkCreateButton = function () {
-//                    if ($scope.gridOptions.createAllowed) {
-//                        $scope.createButton.prop("disabled", false);
-//                    }
-//                    else {
-//                        $scope.createButton.prop("disabled", true);
-//                    }
-//                };
-                //
-//                $scope.checkCreateLink = function () {
-//                    if ($scope.gridOptions.createAllowed) {
-//                        $scope.createLink.show();
-//                    }
-//                    else {
-//                        $scope.createLink.hide();
-//                    }
-//                };
                 //
                 $scope.retrieveFunction = function () {
                     console.log("Retrieve function called on row: "+$scope.selectedRowID);
                 };
-                //
-//                $scope.checkRetrieveLink = function () {
-//                   //console.log ("check retrieve button was polled - it has value: "+$scope.isRowSelected);
-//                    if ($scope.isRowSelected && $scope.gridOptions.retrieveAllowed) {
-//                        $scope.retrieveLink.show();
-//                    }
-//                    else {
-//                        //console.log ("--> Retrieve FALSE");
-//                        $scope.retrieveLink.hide();
-//                    }     
-//                };
                 //
                 $scope.updateFunction = function () {
                     console.log("Update function called on row: "+$scope.selectedRowID);
@@ -148,15 +117,6 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
                 };
-                //
-//                $scope.checkUpdateLink = function () {
-//                    if ($scope.isRowSelected && $scope.gridOptions.updateAllowed) {
-//                        $scope.updateLink.show();
-//                    }
-//                    else {
-//                        $scope.updateLink.hide();
-//                    }
-//                };
                 //
                 $scope.deleteFunction = function () {
                     var uid = $scope.selectedRowID;
@@ -172,50 +132,17 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     }
                 };
                 //
-//                $scope.checkDeleteLink = function () {
-//                    if ($scope.isRowSelected && $scope.gridOptions.deleteAllowed) {
-//                        $scope.deleteLink.show();
-//                    }
-//                    else {
-//                        $scope.deleteLink.hide();
-//                    }
-//                };
-                //
                 $scope.clearSelectionsFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.grid.data("kendoGrid").clearSelection();
-                    $scope.isRowSelected = false;
-                    $scope.selectedRowID = "";
-                    $scope.selectedRowData = {};
-                };
-                //
-                $scope.checkClearLink = function () {
-                    //console.log ("check clear button was polled - it has value: "+$scope.isRowSelected);
-                    if ($scope.isRowSelected) {
-                        $scope.clearLink.show();
-                    }
-                    else {
-                        $scope.clearLink.hide();
-                    }
+                    //$scope.isRowSelected = false;
+                    //$scope.selectedRowID = "";
+                    //$scope.selectedRowData = {};
                 };
                 //
                 $scope.saveFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.gridIsDirty = false;
-                };
-                $scope.commitChanges = function () {
-                    $scope.grid.data("kendoGrid").dataSource.sync();
-                    $scope.isDatasourceDirty = false ;
-                }
-                //
-                $scope.fireButtonCheckers = function () {
-                    //console.log ("Firing button checkers");
-//                    $scope.checkCreateButton();
-//                    $scope.checkCreateLink();
-//                    $scope.checkRetrieveLink();
-//                    $scope.checkUpdateLink();
-//                    $scope.checkDeleteLink();
-//                    $scope.checkClearLink();
                 };
                 //
                 $scope.loadNewGrid = function () {
@@ -251,23 +178,13 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         }],
                         "title": "Contacts"
                     };
-                    //$($scope.grid).kendoGrid($scope.gridOptions);
+                    //
                     $scope.createGrid($scope.grid,$scope.gridOptions);
                     console.log("Refreshed grid ..............");
                 };
             },
             link: function(scope, el, attr) {
                 console.log("In CRUDButtonGroup's link");
-                //printObject(el,"CRUD Element");
-                scope.createButton = $(el[0].querySelector('.grid-create-button'));
-                scope.createLink = $(el[0].querySelector('.grid-create-link'));
-                scope.retrieveLink = $(el[0].querySelector('.grid-retrieve-link'));
-                scope.updateLink = $(el[0].querySelector('.grid-update-link'));
-                scope.deleteLink = $(el[0].querySelector('.grid-delete-link'));
-                scope.clearLink = $(el[0].querySelector('.grid-clear-link'));
-                // manage CRUD buttons visibility
-                scope.fireButtonCheckers();
-                
             }
         }
     });
@@ -283,8 +200,11 @@ angular.module("directiveExample1").directive('grid',
                 console.log("In Grid's controller");
                 $scope.gridid = utilityFunctions.guid();
                 $scope.gridTitle = "Data Set Not Specified";
+                $scope.isRowSelected = false;
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
+                $scope.gridIsDirty = false;
+                //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
                 };
@@ -293,7 +213,6 @@ angular.module("directiveExample1").directive('grid',
                     utilityFunctions.printObjectContents(a,b);
                 };
                 // 
-                //
                 $scope.gridOptions = {
                     createAllowed: false,
                     retrieveAllowed: false,
@@ -346,11 +265,11 @@ angular.module("directiveExample1").directive('grid',
                 function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
                     // and reset the row selections
-                    scope.$apply (function() {
-                        scope.isRowSelected = false;
-                        scope.selectedRowID = "";
-                        scope.selectedRowData = {};
-                    });
+                    //scope.$apply (function() {
+                    //    scope.isRowSelected = false;
+                    //    scope.selectedRowID = "";
+                    //    scope.selectedRowData = {};
+                    //});
                 }
                 //
                 // initialise the reset on pager button event management
@@ -398,8 +317,6 @@ angular.module("directiveExample1").directive('grid',
                         });
                         console.log("Deselected Row");
                     }
-                    // and fire the button checkers
-                    scope.fireButtonCheckers();
                 }
                 //
                 // create the grid's NAVBAR and add the CRUD buttons and TITLE
@@ -507,6 +424,9 @@ angular.module("directiveExample1").directive('gridCreateModal',
                 $scope.saveCreate = function () {
                     console.log("Save in CREATE function called from Grid: "+$scope.gridid);
                     $($scope.createModal).modal('hide');
+                    $scope.gridIsDirty = true;
+                    //$scope.clearSelectionsFunction();
+                
                 }
             },
             link: function(scope, el, attr) {
