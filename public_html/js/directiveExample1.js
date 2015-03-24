@@ -310,11 +310,9 @@ angular.module("directiveExample1").directive('grid',
                         console.log("Selected row uid: "+scope.selectedRowID);
                     }
                     else {
-                        scope.$apply (function() {
-                            scope.isRowSelected = false;
-                            scope.selectedRowData = {};
-                            scope.selectedRowID = "";
-                        });
+                        scope.isRowSelected = false;
+                        scope.selectedRowData = {};
+                        scope.selectedRowID = "";
                         console.log("Deselected Row");
                     }
                 }
