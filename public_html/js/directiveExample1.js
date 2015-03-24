@@ -171,6 +171,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.clearSelectionsFunction = function () {
                     //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.grid.data("kendoGrid").clearSelection();
+                    $scope.isRowSelected = false;
+                    $scope.selectedRowID = "";
+                    $scope.selectedRowData = {};
                 };
                 //
                 $scope.checkClearLink = function () {
@@ -185,12 +188,12 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.fireButtonCheckers = function () {
                     //console.log ("Firing button checkers");
-                    $scope.checkCreateButton();
-                    $scope.checkCreateLink();
-                    $scope.checkRetrieveLink();
-                    $scope.checkUpdateLink();
-                    $scope.checkDeleteLink();
-                    $scope.checkClearLink();
+//                    $scope.checkCreateButton();
+//                    $scope.checkCreateLink();
+//                    $scope.checkRetrieveLink();
+//                    $scope.checkUpdateLink();
+//                    $scope.checkDeleteLink();
+//                    $scope.checkClearLink();
                 };
                 //
                 $scope.loadNewGrid = function () {
@@ -322,9 +325,11 @@ angular.module("directiveExample1").directive('grid',
                 function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
                     // and reset the row selections
-                    scope.isRowSelected = false;
-                    scope.selectedRowID = "";
-                    scope.selectedRowData = {};
+                    scope.$apply (function() {
+                        scope.isRowSelected = false;
+                        scope.selectedRowID = "";
+                        scope.selectedRowData = {};
+                    });
                 }
                 //
                 // initialise the reset on pager button event management
@@ -336,9 +341,11 @@ angular.module("directiveExample1").directive('grid',
                 // reset on pager button click handler - resets grid selection variables
                 function pagerRefreshClicked () {
                     console.log ("Refresh was clicked");
-                    scope.isRowSelected = false;
-                    scope.selectedRowID = "";
-                    scope.selectedRowData = {};
+                    scope.$apply (function() {
+                        scope.isRowSelected = false;
+                        scope.selectedRowID = "";
+                        scope.selectedRowData = {};
+                    });
                 }
                 //
                 // deal with selection in grid
@@ -350,19 +357,23 @@ angular.module("directiveExample1").directive('grid',
                     if (selectedRow.length === 1) {
                         selectedRowModel = selgrid.dataItem(selectedRow);
                         //printObject(selectedRowModel,"Selected Row Data");
-                        scope.isRowSelected = true;
-                        scope.selectedRowData = angular.copy(selectedRowModel);
-                        delete scope.selectedRowData._events;
-                        delete scope.selectedRowData.__metadata;
-                        delete scope.selectedRowData.parent;
-                        //printObject(scope.selectedRowData,"scope.selectedRowData");
-                        scope.selectedRowID = scope.selectedRowData.uid;
+                        scope.$apply (function() {
+                            scope.isRowSelected = true;
+                            scope.selectedRowData = angular.copy(selectedRowModel);
+                            delete scope.selectedRowData._events;
+                            delete scope.selectedRowData.__metadata;
+                            delete scope.selectedRowData.parent;
+                            //printObject(scope.selectedRowData,"scope.selectedRowData");
+                            scope.selectedRowID = scope.selectedRowData.uid;
+                        });
                         console.log("Selected row uid: "+scope.selectedRowID);
                     }
                     else {
-                        scope.isRowSelected = false;
-                        scope.selectedRowData = {};
-                        scope.selectedRowID = "";
+                        scope.$apply (function() {
+                            scope.isRowSelected = false;
+                            scope.selectedRowData = {};
+                            scope.selectedRowID = "";
+                        });
                         console.log("Deselected Row");
                     }
                     // and fire the button checkers
