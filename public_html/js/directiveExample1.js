@@ -88,27 +88,15 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             replace: true,
             scope: false,
             controller: function($scope, $element, utilityFunctions){
-                console.log("In CRUDButtonGroup's controller");
-//                $scope.createButton = null;
-//                $scope.createLink = null;
-//                $scope.retrieveLink = null;
-//                $scope.updateLink = null;
-//                $scope.deleteLink = null;
-//                $scope.clearLink = null;
-//                $scope.isDatasourceDirty = false;
-//                $scope.isRowSelected = false;
                 //
                 $scope.createFunction = function () {
-                    console.log("Create function called from Grid: "+$scope.gridid);
                     $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
                 };
                 //
                 $scope.retrieveFunction = function () {
-                    console.log("Retrieve function called on row: "+$scope.selectedRowID);
                 };
                 //
                 $scope.updateFunction = function () {
-                    console.log("Update function called on row: "+$scope.selectedRowID);
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID);
                     columnName = "ContactName";
@@ -120,36 +108,26 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.deleteFunction = function () {
                     var uid = $scope.selectedRowID;
-                    console.log("Delete function called on row: "+uid);
                     if (confirm("Are you sure ?")) {
                         var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
                         $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         dataRow.dirty = true;
-                        printObject(dataRow,"Data Row");
                         $scope.clearSelectionsFunction();
                         $scope.gridIsDirty = true;
-                        $scope.isDatasourceDirty = true;
                     }
                 };
                 //
                 $scope.clearSelectionsFunction = function () {
-                    //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.grid.data("kendoGrid").clearSelection();
-                    //$scope.isRowSelected = false;
-                    //$scope.selectedRowID = "";
-                    //$scope.selectedRowData = {};
                 };
                 //
                 $scope.saveFunction = function () {
-                    //alert("Clear function called from Grid: "+$scope.gridid);
                     $scope.gridIsDirty = false;
                 };
                 //
                 $scope.loadNewGrid = function () {
-                    console.log ("Loading sample new grid");
                     $($scope.grid).data("kendoGrid").destroy();
                     $($scope.grid).empty();
-                    console.log("Destroyed and emptied old grid .....");
                     $scope.gridOptions = {
                         createAllowed: true,
                         retrieveAllowed: true,
@@ -180,13 +158,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     };
                     //
                     $scope.createGrid($scope.grid,$scope.gridOptions);
-                    console.log("Refreshed grid ..............");
                 };
             },
             link: function(scope, el, attr) {
-                console.log("In CRUDButtonGroup's link");
             }
-        }
+        };
     });
     
 angular.module("directiveExample1").directive('grid', 
@@ -229,7 +205,6 @@ angular.module("directiveExample1").directive('grid',
                 };
             },
             link: function(scope, el, attr) {
-                console.log("In Grid's link");
                 // initialise scope-wide variables
                 scope.grid = el;
                 // initialise directive-wide variables
@@ -267,12 +242,6 @@ angular.module("directiveExample1").directive('grid',
                 // initialise the grid row selection event management
                 function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
-                    // and reset the row selections
-                    //scope.$apply (function() {
-                    //    scope.isRowSelected = false;
-                    //    scope.selectedRowID = "";
-                    //    scope.selectedRowData = {};
-                    //});
                 }
                 //
                 // initialise the grid data source change event management
@@ -288,7 +257,6 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // reset on pager button click handler - resets grid selection variables
                 function pagerRefreshClicked () {
-                    console.log ("Refresh was clicked");
                     scope.$apply (function() {
                         scope.gridIsDirty = false;
                         scope.isRowSelected = false;
@@ -301,27 +269,21 @@ angular.module("directiveExample1").directive('grid',
                 function gridSelection (e) {
                     selgrid = $(scope.grid).data("kendoGrid");
                     selectedRow = selgrid.select();
-                    console.log("Grid row selection called");
-                    //printObject(selectedRow,"Selected Row");
                     if (selectedRow.length === 1) {
                         selectedRowModel = selgrid.dataItem(selectedRow);
-                        //printObject(selectedRowModel,"Selected Row Data");
                         scope.$apply (function() {
                             scope.isRowSelected = true;
                             scope.selectedRowData = angular.copy(selectedRowModel);
                             delete scope.selectedRowData._events;
                             delete scope.selectedRowData.__metadata;
                             delete scope.selectedRowData.parent;
-                            //printObject(scope.selectedRowData,"scope.selectedRowData");
                             scope.selectedRowID = scope.selectedRowData.uid;
                         });
-                        console.log("Selected row uid: "+scope.selectedRowID);
                     }
                     else {
                         scope.isRowSelected = false;
                         scope.selectedRowData = {};
                         scope.selectedRowID = "";
-                        console.log("Deselected Row");
                     }
                 }
                 //
@@ -359,7 +321,6 @@ angular.module("directiveExample1").directive('grid',
                     });
                     // adjust otherElementsHeight ...... kludge ..... seems that adding 13 pixels to it makes it work OK ... Spooky !!!!!
                     otherElementsHeight += 13;
-                    //console.log("Other elements height = "+otherElementsHeight);
                     dataArea = scope.grid.find(".k-grid-content");
                     resizeGrid();
                     // deal with overall window resize events
@@ -368,11 +329,8 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // ResizeGrid Function
                 function resizeGrid () {
-                    //console.log ('Grid was resized');
                     gridHeight = $(scope.grid).height();
-                    console.log("New Grid element height = "+gridHeight);
                     dataArea.height(gridHeight - otherElementsHeight);
-                    console.log("Set dataArea height to : "+dataArea.height());
                 };
                 //
                 // Constrain / Adjust Grid Options
@@ -416,10 +374,8 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // capture and process data source change events
                 function gridDataSourceChange (evt) {
-                    console.log ("------> Grid Data Source changed");
                     if (! evt.action) {
                         // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
-                        console.log ("       Looks like a grid pager event");
                         scope.$apply (function() {
                             scope.isRowSelected = false;
                             scope.selectedRowData = {};
@@ -439,18 +395,15 @@ angular.module("directiveExample1").directive('gridCreateModal',
             replace: true,
             scope: false,
             controller: function($scope, $element, utilityFunctions){
-                console.log("In gridCreateModal's controller");
                 $scope.popupTitle = 'Creating Record - '+$scope.gridTitle;
+                //
+                // deal with save button event from the modal
                 $scope.saveCreate = function () {
-                    console.log("Save in CREATE function called from Grid: "+$scope.gridid);
                     $($scope.createModal).modal('hide');
                     $scope.gridIsDirty = true;
-                    //$scope.clearSelectionsFunction();
-                
                 }
             },
             link: function(scope, el, attr) {
-                console.log("In gridCreateModal's link");
                 }
         }
     });
