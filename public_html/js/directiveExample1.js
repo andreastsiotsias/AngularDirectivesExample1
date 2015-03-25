@@ -122,7 +122,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 };
                 //
                 $scope.saveFunction = function () {
+                    console.log ("Called saveFunction");
                     $scope.gridIsDirty = false;
+                    console.log ("Datasource is dirty: "+$scope.grid.data("kendoGrid").dataSource.hasChanges());
+                    $scope.grid.data("kendoGrid").dataSource.sync();
+                    //printObject ($scope.grid.data("kendoGrid").dataSource, "Data Source");
                 };
                 //
                 $scope.loadNewGrid = function () {
@@ -134,26 +138,35 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         updateAllowed: true,
                         deleteAllowed: true,
                         dataSource: {
-                            type: "odata",
+                            //type: "odata",
                             transport: {
-                                read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                //read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers",
+                                read:  {
+                                    url: "http://demos.telerik.com/kendo-ui/service/products",
+                                    dataType: "jsonp" //"jsonp" is required for cross-domain requests; use "json" for same-domain requests
+                                },
+                                destroy: {
+                                    url: "http://demos.telerik.com/kendo-ui/service/products/destroy",
+                                    dataType: "jsonp" // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
+                                }
                             },
+                            batch: true,
                             pageSize: 20
                         },
-                        columns: [{
-                            field: "ContactName",
-                            title: "Contact Name",
-                            width: 200
-                        }, {
-                            field: "ContactTitle",
-                            title: "Contact Title"
-                        }, {
-                            field: "CompanyName",
-                            title: "Company Name"
-                        }, {
-                            field: "Country",
-                            width: 150
-                        }],
+                        //columns: [{
+                        //   field: "ContactName",
+                        //    title: "Contact Name",
+                        //    width: 200
+                        //}, {
+                        //    field: "ContactTitle",
+                        //    title: "Contact Title"
+                        //}, {
+                        //    field: "CompanyName",
+                        //    title: "Company Name"
+                        //}, {
+                        //    field: "Country",
+                        //    width: 150
+                        //}],
                         "title": "Contacts"
                     };
                     //
@@ -203,6 +216,18 @@ angular.module("directiveExample1").directive('grid',
                         "pageSize": 15
                     },
                     "title": "Empty data set"
+                };
+                //
+                $scope.commitDataSourceCreateChanges = function (options) {
+                    console.log ("---> Commit Data Source CREATE Changes has been called");
+                };
+                //
+                $scope.commitDataSourceUpdateChanges = function (options) {
+                    console.log ("---> Commit Data Source UPDATE Changes has been called");
+                };
+                //
+                $scope.commitDataSourceDeleteChanges = function (options) {
+                    console.log ("---> Commit Data Source DELETE Changes has been called");
                 };
             },
             link: function(scope, el, attr) {
