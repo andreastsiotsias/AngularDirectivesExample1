@@ -443,6 +443,11 @@ angular.module("directiveExample1").directive('grid',
                 // capture and process data source change events
                 function gridDataSourceChange (evt) {
                     console.log ("Change event: "+evt.action);
+                    if (evt.action) {
+                        printObject(evt, "Change Event");
+                        printObject(evt.items[0], "Change Items");
+                        printObject(evt.sender.options, "Change Sender");
+                    }
                     if (! evt.action) {
                         // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
                         scope.$apply (function() {
