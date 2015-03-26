@@ -143,6 +143,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                 }
                             },
                             type: "odata",
+                            serverFiltering: true,
                             transport: {
                                 read: {
                                     url: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
@@ -156,35 +157,34 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                     url: "./CustomersUpdate.json",
                                     type: "GET",
                                     dataType: "json",
-                                    contentType: "application/json",
-                                    data: {
-                                        uid: $scope.gridid
-                                    }
+                                    data: {savedOn: Date()}
                                 }
                                 ,
-                                parameterMap: function(data, type) {
-                                    console.log ("Parameter Map type: "+type);
-                                    if (type == "read") {
-                                        return {
-                                            $format: "json",
-                                            $inlinecount: "allpages"
-                                        }
+                                parameterMap: function(options, operation) {
+                                    //console.log ("Parameter Map type: "+operation);
+                                   if (operation == "read") {
+                                       return {
+                                           $format: "json",
+                                           $inlinecount: "allpages"
+                                       }
                                     }
-                                    else if (type == "update") {
-                                        return {
-                                            rowID: $scope.gridid,
-                                            uid: data.uid     
-                                        }
-                                    }
+                                    else {
+                                      console.log("Saved On:"+options.savedOn);
+                                       //printObject(options, "Options");
+                                       //printObject(options.__metadata,"__metadata");
+                                       return {options: kendo.stringify(options)};
+                                   }
                                 }
                             },
-                            batch: false,
+                            batch: true,
                             pageSize: 20
                         },
                         columns: [{
+                            field: "uid",
+                            title: "Unique ID"
+                        }, {
                             field: "ContactName",
-                            title: "Contact Name",
-                            width: 200
+                            title: "Contact Name"
                         }, {
                             field: "ContactTitle",
                             title: "Contact Title"
@@ -244,18 +244,6 @@ angular.module("directiveExample1").directive('grid',
                         "pageSize": 15
                     },
                     "title": "Empty data set"
-                };
-                //
-                $scope.commitDataSourceCreateChanges = function (options) {
-                    console.log ("---> Commit Data Source CREATE Changes has been called");
-                };
-                //
-                $scope.commitDataSourceUpdateChanges = function (options) {
-                    console.log ("---> Commit Data Source UPDATE Changes has been called");
-                };
-                //
-                $scope.commitDataSourceDeleteChanges = function (options) {
-                    console.log ("---> Commit Data Source DELETE Changes has been called");
                 };
             },
             link: function(scope, el, attr) {
@@ -318,7 +306,7 @@ angular.module("directiveExample1").directive('grid',
                     scope.$apply (function() {
                         scope.gridIsDirty = false;
                         scope.areRowsSelected = false;
-                        $scope.rowsSelected = 0;
+                        scope.rowsSelected = 0;
                         scope.selectedRowID = "";
                         scope.selectedRowData = {};
                     });
@@ -444,9 +432,9 @@ angular.module("directiveExample1").directive('grid',
                 function gridDataSourceChange (evt) {
                     console.log ("Change event: "+evt.action);
                     if (evt.action) {
-                        printObject(evt, "Change Event");
-                        printObject(evt.items[0], "Change Items");
-                        printObject(evt.sender.options, "Change Sender");
+                        //printObject(evt, "Change Event");
+                        //printObject(evt.items[0], "Change Items");
+                        //printObject(evt.sender.options, "Change Sender");
                     }
                     if (! evt.action) {
                         // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
