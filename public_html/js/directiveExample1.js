@@ -124,7 +124,6 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.saveFunction = function () {
                     console.log ("Called saveFunction");
                     $scope.gridIsDirty = false;
-                    console.log ("Datasource is dirty: "+$scope.grid.data("kendoGrid").dataSource.hasChanges());
                     $scope.grid.data("kendoGrid").dataSource.sync();
                     //printObject ($scope.grid.data("kendoGrid").dataSource, "Data Source");
                 };
@@ -138,36 +137,65 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         updateAllowed: true,
                         deleteAllowed: true,
                         dataSource: {
-                            //type: "odata",
-                            transport: {
-                                //read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers",
-                                read:  {
-                                    url: "http://demos.telerik.com/kendo-ui/service/products",
-                                    dataType: "jsonp" //"jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                                },
-                                destroy: {
-                                    url: "http://demos.telerik.com/kendo-ui/service/products/destroy",
-                                    dataType: "jsonp" // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
+                            schema: {
+                                model: {
+                                    id: "uid"
                                 }
                             },
-                            batch: true,
+                            type: "odata",
+                            transport: {
+                                read: {
+                                    url: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                },
+                                destroy: {
+                                    url: "./CustomersDestroy.json",
+                                    type: "GET",
+                                    dataType: "json"
+                                },
+                                update: {
+                                    url: "./CustomersUpdate.json",
+                                    type: "GET",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: {
+                                        uid: $scope.gridid
+                                    }
+                                }
+                                ,
+                                parameterMap: function(data, type) {
+                                    console.log ("Parameter Map type: "+type);
+                                    if (type == "read") {
+                                        return {
+                                            $format: "json",
+                                            $inlinecount: "allpages"
+                                        }
+                                    }
+                                    else if (type == "update") {
+                                        return {
+                                            rowID: $scope.gridid,
+                                            uid: data.uid     
+                                        }
+                                    }
+                                }
+                            },
+                            batch: false,
                             pageSize: 20
                         },
-                        //columns: [{
-                        //   field: "ContactName",
-                        //    title: "Contact Name",
-                        //    width: 200
-                        //}, {
-                        //    field: "ContactTitle",
-                        //    title: "Contact Title"
-                        //}, {
-                        //    field: "CompanyName",
-                        //    title: "Company Name"
-                        //}, {
-                        //    field: "Country",
-                        //    width: 150
-                        //}],
-                        "title": "Contacts"
+                        columns: [{
+                            field: "ContactName",
+                            title: "Contact Name",
+                            width: 200
+                        }, {
+                            field: "ContactTitle",
+                            title: "Contact Title"
+                        }, {
+                            field: "CompanyName",
+                            title: "Company Name"
+                        }, {
+                            field: "Country",
+                            width: 150
+                        }],
+                        title: "Contacts"
                     };
                     //
                     $scope.createGrid($scope.grid,$scope.gridOptions);
@@ -414,6 +442,7 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // capture and process data source change events
                 function gridDataSourceChange (evt) {
+                    console.log ("Change event: "+evt.action);
                     if (! evt.action) {
                         // we assume that it is a pager-initiated function; hence, we assume selections have been cleared
                         scope.$apply (function() {
