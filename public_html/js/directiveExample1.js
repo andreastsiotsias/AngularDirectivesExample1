@@ -90,7 +90,22 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             controller: function($scope, $element, utilityFunctions){
                 //
                 $scope.createFunction = function () {
-                    $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
+                    //$($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
+                    var insertItem = {
+                        "ContactName": "A NEW Andreas Tsiotsias",
+                        "ContactTitle": "Technical Advocate",
+                        "CompanyName": "IBM UK Ltd",
+                        "Country": "UK-GB"
+                    };
+                    $scope.gridDataSource.insert(0, insertItem);
+                    insertItem = {
+                        "ContactName": "Andrew Blake",
+                        "ContactTitle": "Software Client Architect",
+                        "CompanyName": "IBM UK Ltd",
+                        "Country": "UK-GB"
+                    };
+                    $scope.gridDataSource.insert(0, insertItem);
+                    $scope.gridIsDirty = true;
                 };
                 //
                 $scope.retrieveFunction = function () {
@@ -99,10 +114,10 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateFunction = function () {
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID);
-                    columnName = "ContactName";
-                    columnValue = "Andreas Stylianos Tsiotsias";
+                    var columnName = "ContactName";
+                    var columnValue = "Andreas Stylianos Tsiotsias";
                     dataRow.set(columnName, columnValue);
-                    dataRow.dirty = true;
+                    //dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
                 };
                 //
@@ -111,7 +126,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     if (confirm("Are you sure ?")) {
                         var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
                         $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
-                        dataRow.dirty = true;
+                        //dataRow.dirty = true;
                         $scope.clearSelectionsFunction();
                         $scope.gridIsDirty = true;
                     }
@@ -131,6 +146,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.loadNewGrid = function () {
                     $($scope.grid).data("kendoGrid").destroy();
                     $($scope.grid).empty();
+                    $scope.gridIsDirty = false;
                     $scope.gridOptions = {
                         createAllowed: true,
                         retrieveAllowed: true,
@@ -139,14 +155,38 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         dataSource: {
                             schema: {
                                 model: {
-                                    id: "uid"
-                                }
+                                    id: "uid",
+                                    uniqueKey: ["ContactName","ContatTitle"],
+                                    fields: {
+                                        "ContactName": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "ContactTitle": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "CompanyName": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "Country": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    }
+                                },
                             },
                             type: "odata",
                             serverFiltering: true,
                             transport: {
                                 read: {
                                     url: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                },
+                                create: {
+                                    url: "./CustomersCreate.json",
+                                    type: "GET",
+                                    dataType: "json"
                                 },
                                 destroy: {
                                     url: "./CustomersDestroy.json",
@@ -156,25 +196,24 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                 update: {
                                     url: "./CustomersUpdate.json",
                                     type: "GET",
-                                    dataType: "json",
-                                    data: {savedOn: Date()}
+                                   dataType: "json"
                                 }
-                                ,
-                                parameterMap: function(options, operation) {
-                                    //console.log ("Parameter Map type: "+operation);
-                                   if (operation == "read") {
-                                       return {
-                                           $format: "json",
-                                           $inlinecount: "allpages"
-                                       }
-                                    }
-                                    else {
-                                      console.log("Saved On:"+options.savedOn);
-                                       //printObject(options, "Options");
-                                       //printObject(options.__metadata,"__metadata");
-                                       return {options: kendo.stringify(options)};
-                                   }
-                                }
+                                //,
+                                //parameterMap: function(options, operation) {
+                                //    //console.log ("Parameter Map type: "+operation);
+                                //   if (operation == "read") {
+                                //       return {
+                                //           $format: "json",
+                                //           $inlinecount: "allpages"
+                                //       }
+                                //    }
+                                //    else {
+                                //      console.log("Saved On:"+options.savedOn);
+                                //       //printObject(options, "Options");
+                                //       //printObject(options.__metadata,"__metadata");
+                                //       return {options: kendo.stringify(options)};
+                                //   }
+                                //}
                             },
                             batch: true,
                             pageSize: 20
@@ -222,6 +261,8 @@ angular.module("directiveExample1").directive('grid',
                 $scope.selectedRowID = "";
                 $scope.selectedRowData = {};
                 $scope.gridIsDirty = false;
+                $scope.gridDataSource;
+                $scope.gridDataSourceChangeLog = [];
                 //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
@@ -292,7 +333,8 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // initialise the grid data source change event management
                 function manageGridDataSourceChange () {
-                    gridDataSource = $(scope.grid).data("kendoGrid").dataSource.bind("change",gridDataSourceChange);
+                    scope.gridDataSource = $(scope.grid).data("kendoGrid").dataSource;
+                    scope.gridDataSource.bind("change",gridDataSourceChange);
                 }
                 //
                 // initialise the reset on pager button event management
@@ -432,8 +474,8 @@ angular.module("directiveExample1").directive('grid',
                 function gridDataSourceChange (evt) {
                     console.log ("Change event: "+evt.action);
                     if (evt.action) {
-                        //printObject(evt, "Change Event");
-                        //printObject(evt.items[0], "Change Items");
+                        printObject(evt, "Change Event");
+                        printObject(evt.items[0], "Change Items");
                         //printObject(evt.sender.options, "Change Sender");
                     }
                     if (! evt.action) {
