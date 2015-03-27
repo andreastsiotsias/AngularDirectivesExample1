@@ -195,8 +195,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                 },
                                 update: {
                                     url: "./CustomersUpdate.json",
-                                    type: "GET",
+                                    type: "POST",
                                    dataType: "json"
+                                },
+                                complete: function () {
+                                    console.log("SYNC Completed");
                                 }
                                 //,
                                 //parameterMap: function(options, operation) {
