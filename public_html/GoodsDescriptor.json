@@ -1,0 +1,82 @@
+{
+    "columns": [
+        {"field": "Code", "title": "Part Number", "width": 140, "filterable": true}, 
+        {"field": "Version", "title": "Revision", "filterable": true}, 
+        {"field": "Maturity", "title": "Status", "width": 100, "filterable": true},  
+        {"field": "Title", "title": "Description", "width": 140, "filterable": true},
+        {"field": "Price", "title": "Unit Cost", "width": 140, "filterable": true},
+        {"field": "Units", "title": "Stock Quantity", "width": 140, "filterable": true}
+    ],
+    "dataSource" : {
+        "schema": {
+            "model": {
+                "id": "uid",            
+                "fields": {
+                    "Code": {
+                        "type": "string",
+                        "editable": true,
+                        "nullable": false,
+                        "defaultValue": "xx-yyyy"
+                   },
+                    "Version": {
+                        "type": "string",
+                        "editable": false,
+                        "nullable": false,
+                        "defaultValue": "A",
+                        "helpValues": ["A","B","C","D","E","1","2","3","4","5","6","7","8","9","10","11","12"]
+                   },
+                    "Maturity": {
+                        "type": "string",
+                        "editable": true,
+                        "nullable": false,
+                        "defaultValue": "Created",
+                        "authorisedValues": ["Created","In Work","In Review","Ready for Release","Released"]
+                        
+                    },
+                    "Title": {
+                        "type": "string",
+                        "editable": true,
+                        "nullable": true
+                    },
+                    "Price": {
+                        "type": "number",
+                        "editable": true,
+                        "nullable": false,
+                        "defaultValue": 0.00
+                    },
+                    "Units": {
+                        "type": "number",
+                        "editable": true,
+                        "nullable": false,
+                        "defaultValue": 1,
+                        "minValue": 0,
+                        "maxValue": 1000,
+                        "incrementStep": 1
+                    }
+                }
+            }
+        },
+        "transport": {
+            "read": {
+                "url": "./Goods.json",
+                "type": "GET",
+                "dataType": "json"
+            },
+            "create": {
+                "url": "./GoodsCreate",
+                "type": "POST",
+                "dataType": "json"
+            },
+            "destroy": {
+                "url": "./GoodsDestroy",
+                "type": "POST",
+                "dataType": "json"
+            },
+            "update": {
+                "url": "./GoodsUpdate",
+                "type": "POST",
+                "dataType": "json"
+            }
+        }
+    }
+}
