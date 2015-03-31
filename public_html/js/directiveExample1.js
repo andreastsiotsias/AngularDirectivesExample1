@@ -114,6 +114,12 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateFunction = function () {
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID);
+                    var columnName = "Version";
+                    var columnValue = "--A";
+                    dataRow.set(columnName, columnValue);
+                    var columnName = "Maturity";
+                    var columnValue = "Unknown";
+                    dataRow.set(columnName, columnValue);
                     var columnName = "changeLog";
                     var columnValue = "Changed row with value: "+dataRow.get("Code");
                     dataRow.set(columnName, columnValue);
