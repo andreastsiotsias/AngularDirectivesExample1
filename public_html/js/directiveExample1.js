@@ -106,6 +106,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     };
                     $scope.gridDataSource.insert(0, insertItem);
                     $scope.gridIsDirty = true;
+                    $scope.gridChangesPending++;
                 };
                 //
                 $scope.retrieveFunction = function () {
@@ -125,16 +126,29 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     dataRow.set(columnName, columnValue);
                     //dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
+                    $scope.gridChangesPending++;
                 };
                 //
                 $scope.deleteFunction = function () {
-                    var uid = $scope.selectedRowID;
                     if (confirm("Are you sure ?")) {
-                        var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uid);
-                        $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
+                        // manage all selected rows - including multi-select of rows to delete
+                        var rows = $scope.grid.data("kendoGrid").select();
+                        var uidarray=[];
+                        //printObject (rows, "Rows");
+                        for (i=0; i<rows.length; i++) {
+                            printObject (rows[i], "Row "+i);
+                            var rowModel = $scope.grid.data("kendoGrid").dataItem(rows[i]);
+                            uidarray[i] = rowModel.uid;
+                        }
+                        // now remove the selected rows
+                        for (i=0; i<uidarray.length; i++) {
+                            var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid(uidarray[i]);
+                            $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
+                        }
                         //dataRow.dirty = true;
                         $scope.clearSelectionsFunction();
                         $scope.gridIsDirty = true;
+                        $scope.gridChangesPending=$scope.gridChangesPending+rows.length;
                     }
                 };
                 //
@@ -145,6 +159,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.saveFunction = function () {
                     console.log ("Called saveFunction");
                     $scope.gridIsDirty = false;
+                    $scope.gridChangesPending = 0;
                     $scope.grid.data("kendoGrid").dataSource.sync();
                     //printObject ($scope.grid.data("kendoGrid").dataSource, "Data Source");
                 };
@@ -153,6 +168,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $($scope.grid).data("kendoGrid").destroy();
                     $($scope.grid).empty();
                     $scope.gridIsDirty = false;
+                    $scope.gridChangesPending = 0;
                     $scope.gridOptions = {
                         createAllowed: true,
                         retrieveAllowed: true,
@@ -270,6 +286,7 @@ angular.module("directiveExample1").directive('grid',
                 $scope.gridIsDirty = false;
                 $scope.gridDataSource;
                 $scope.gridDataSourceChangeLog = [];
+                $scope.gridChangesPending = 0;
                 //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);

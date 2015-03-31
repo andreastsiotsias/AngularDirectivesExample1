@@ -1,6 +1,7 @@
 <div class="btn-group btn-default navbar-right" style="padding-right: 20px;background: transparent">
     <button type="button" class="btn btn-warning grid-save-button" ng-click="saveFunction()"
-            ng-show="gridIsDirty">Save All Changes</button>
+        ng-show="gridIsDirty">Save All Changes 
+        <span class="badge" ng-model="gridChangesPending">{{gridChangesPending}}</span></button>
     <button type="button" class="btn btn-info grid-create-button" ng-click="createFunction()"
             ng-disabled="!gridOptions.createAllowed">Create New Record</button>
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
