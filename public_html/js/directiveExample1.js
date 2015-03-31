@@ -182,20 +182,17 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                     url: "./Goods.json"
                                 },
                                 create: {
-                                    url: "http://localhost:8080/DataGridServlets/CustomersOperations",
-                                    type: "POST",
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
                                     dataType: "jsonp",
                                     contentType: "application/json"
                                 },
                                 destroy: {
-                                    url: "http://localhost:8080/DataGridServlets/CustomersOperations",
-                                    type: "POST",
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
                                     dataType: "jsonp",
                                     contentType: "application/json"
                                 },
                                 update: {
-                                    url: "http://localhost:8080/DataGridServlets/CustomersOperations",
-                                    type: "POST",
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
                                     dataType: "jsonp",
                                     contentType: "application/json"
                                 }
@@ -209,9 +206,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                        }
                                     }
                                     else {
+                                        console.log("Number of Models: "+options.models.length);
                                         printObject(options.models[0], "Options.Models.0");
                                         return {
-                                            changes: options.models[0].changeLog
+                                            numberOfChanges: options.models.length,
+                                            changes: {0: options.models[0].changeLog}
                                             //options: kendo.stringify("{}")};
                                         }
                                     }
