@@ -91,19 +91,18 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.createFunction = function () {
                     //***** LEAVE THIS ALONE ****** $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
                     var insertItem = {
-                        "ContactName": "A NEW Andreas Tsiotsias",
-                        "ContactTitle": "Technical Advocate",
-                        "CompanyName": "IBM UK Ltd",
-                        "Country": "UK-GB"
+                        "Code": "30-1234",
+                        "Version": "A",
+                        "Maturity": "Created",
+                        "Title": "A sample item for testing purposes"
                     };
                     $scope.gridDataSource.insert(0, insertItem);
-                    insertItem = {
-                        "ContactName": "Andrew Blake",
-                        "ContactTitle": "Software Client Architect",
-                        "CompanyName": "IBM UK Ltd",
-                        "Country": "UK-GB"
-                    };
-                    $scope.gridDataSource.insert(0, insertItem);
+                    // get the UID of the new row and use it to populate the change log
+                    var dataRow = $scope.grid.data("kendoGrid").dataSource.at(0);
+                    //console.log ("New Item: "+JSON.stringify(dataRow));
+                    var dataRowTruncated = JSON.parse(JSON.stringify(dataRow));
+                    //dataRow.changeLog = {operation: "INSERT", uid_reference: dataRow.get("uid"), record: []};
+                    addToChangeLog (dataRow, "INSERT", dataRowTruncated);
                     $scope.gridIsDirty = true;
                     $scope.gridChangesPending++;
                 };
@@ -114,13 +113,16 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateFunction = function () {
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[0]);
-                    dataRow.changeLog = {operation: "UPDATE", uid_reference: dataRow.get("uid"), record: []};
+                    //dataRow.changeLog = {operation: "UPDATE", uid_reference: dataRow.get("uid"), record: []};
                     var columnName = "Version";
                     var columnValue = "--A";
-                    dataRow.changeLog.record[0] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
-                    dataRow.set(columnName, columnValue);var columnName = "Maturity";
+                    //dataRow.changeLog.record[0] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
+                    addToChangeLog (dataRow, "UPDATE", {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
+                    dataRow.set(columnName, columnValue);
+                    var columnName = "Maturity";
                     var columnValue = "Unknown";
-                    dataRow.changeLog.record[1] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
+                    //dataRow.changeLog.record[1] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
+                    // **** NEED TO FIX THIS **** addToChangeLogRecord (dataRow.changeLog, {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
                     dataRow.set(columnName, columnValue);
                     //dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
@@ -131,9 +133,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     if (confirm("Are you sure ?")) {
                         for (i=0; i<$scope.selectedRowID.length; i++) {
                             var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[i]);
-                            var columnName = "changeLog";
-                            var columnValue = "operation: DELETE, uid_reference:"+dataRow.get("uid");
-                            dataRow.set(columnName, columnValue);
+                            //dataRow.changeLog = {operation: "DELETE", uid_reference: dataRow.get("uid"), record: []};
+                            addToChangeLog (dataRow, "DELETE", {});
                             $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         }
                         $scope.gridChangesPending=$scope.gridChangesPending+$scope.selectedRowID.length;
@@ -141,6 +142,20 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         $scope.gridIsDirty = true;
                     }
                 };
+                //
+                addToChangeLog = function (dataRow, oper, record_data) {
+                    if (!dataRow.changeLog) {
+                        dataRow.changeLog = [];
+                    }
+                    var nextChangeLogEntry = dataRow.changeLog.length;
+                    dataRow.changeLog[nextChangeLogEntry] = {operation: oper, uid_reference: dataRow.get("uid"), record: []};
+                    addToChangeLogRecord (dataRow.changeLog[nextChangeLogEntry],record_data);
+                }
+                //
+                addToChangeLogRecord = function (changeLog, record_data) {
+                    var nextChangeLogRecord = changeLog.record.length;
+                    changeLog.record[nextChangeLogRecord]=record_data;
+                }
                 //
                 $scope.clearSelectionsFunction = function () {
                     $scope.grid.data("kendoGrid").clearSelection();
