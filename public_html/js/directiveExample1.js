@@ -114,14 +114,13 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateFunction = function () {
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[0]);
+                    dataRow.changeLog = {operation: "UPDATE", uid_reference: dataRow.get("uid"), record: []};
                     var columnName = "Version";
                     var columnValue = "--A";
-                    dataRow.set(columnName, columnValue);
-                    var columnName = "Maturity";
+                    dataRow.changeLog.record[0] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
+                    dataRow.set(columnName, columnValue);var columnName = "Maturity";
                     var columnValue = "Unknown";
-                    dataRow.set(columnName, columnValue);
-                    var columnName = "changeLog";
-                    var columnValue = "operation: UPDATE, uid_reference:"+dataRow.get("uid");
+                    dataRow.changeLog.record[1] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
                     dataRow.set(columnName, columnValue);
                     //dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
@@ -215,7 +214,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                        return {
                                            $format: "json",
                                            $inlinecount: "allpages"
-                                       }
+                                       };
                                     }
                                     else {
                                         console.log("Number of Models: "+options.models.length);
@@ -225,9 +224,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                         //printObject(options.models[0], "Options.Models.0");
                                         return {
                                             numberOfChanges: options.models.length,
-                                            changes: {0: options.models[0].changeLog}
+                                            changes: kendo.stringify(options.models[0].changeLog)
                                             //options: kendo.stringify("{}")};
-                                        }
+                                        };
                                     }
                                 }
                             },
