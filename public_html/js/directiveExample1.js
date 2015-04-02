@@ -99,10 +99,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.gridDataSource.insert(0, insertItem);
                     // get the UID of the new row and use it to populate the change log
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.at(0);
-                    //console.log ("New Item: "+JSON.stringify(dataRow));
                     var dataRowTruncated = JSON.parse(JSON.stringify(dataRow));
-                    //dataRow.changeLog = {operation: "INSERT", uid_reference: dataRow.get("uid"), record: []};
-                    addToChangeLog (dataRow, "INSERT", dataRowTruncated);
+                    var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
+                    addToChangeLog (dataRow, "INSERT", resolvedKey, dataRowTruncated);
                     $scope.gridIsDirty = true;
                     $scope.gridChangesPending++;
                 };
@@ -113,18 +112,16 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.updateFunction = function () {
                     $scope.gridIsDirty = true;
                     var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[0]);
-                    //dataRow.changeLog = {operation: "UPDATE", uid_reference: dataRow.get("uid"), record: []};
+                    var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
                     var columnName = "Version";
                     var columnValue = "--A";
-                    //dataRow.changeLog.record[0] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
-                    addToChangeLog (dataRow, "UPDATE", {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
+                    addToChangeLog (dataRow, "UPDATE", resolvedKey, {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
                     dataRow.set(columnName, columnValue);
+                    var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
                     var columnName = "Maturity";
                     var columnValue = "Unknown";
-                    //dataRow.changeLog.record[1] = {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue};
-                    // **** NEED TO FIX THIS **** addToChangeLogRecord (dataRow.changeLog, {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
+                    addToChangeLog (dataRow, "UPDATE", resolvedKey, {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
                     dataRow.set(columnName, columnValue);
-                    //dataRow.dirty = true;
                     $scope.clearSelectionsFunction();
                     $scope.gridChangesPending++;
                 };
@@ -133,9 +130,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     if (confirm("Are you sure ?")) {
                         for (i=0; i<$scope.selectedRowID.length; i++) {
                             var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[i]);
-                            //dataRow.changeLog = {operation: "DELETE", uid_reference: dataRow.get("uid"), record: []};
-                            console.log ("Unique Key is: "+$scope.resolveUniqueKey(dataRow.get("uid")));
-                            addToChangeLog (dataRow, "DELETE", {});
+                            var dataRowTruncated = JSON.parse(JSON.stringify(dataRow));
+                            var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
+                            addToChangeLog (dataRow, "DELETE", resolvedKey, dataRowTruncated);
                             $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         }
                         $scope.gridChangesPending=$scope.gridChangesPending+$scope.selectedRowID.length;
@@ -144,48 +141,44 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     }
                 };
                 //
-                addToChangeLog = function (dataRow, oper, record_data) {
+                addToChangeLog = function (dataRow, oper, ukey, record_data) {
                     switch (oper) {
                         case "INSERT":
                         {
                             // In the INSERT case, just re-initiliase the attribute as there will be only 1 INSERT event
-                            dataRow.changeLogForINSERT = [];
+                            dataRow.changeLogForINSERT = {};
                             var uid_ref = dataRow.get("uid");
-                            dataRow.changeLogINSERT = {operation: oper, uid_reference: uid_ref, 
-                                uniqueKey: JSON.parse($scope.resolveUniqueKey(uid_ref)), record: []};
-                            addToChangeLogRecord (dataRow.changeLogINSERT,record_data);
+                            dataRow.changeLogForINSERT = {operation: oper, uid_reference: uid_ref, record: []};
+                            addToChangeLogRecord (dataRow.changeLogForINSERT, ukey, record_data);
                         }
                             break;
                         case "UPDATE":
                         {
-                            
+                            // In the UPDATE case, we cannot reinitialise as there may be multiple changes to a single record
+                            // instead, we rely on a cleanup function which is run after the SYNC operation for cleanup
+                            // so, here, we check that the attribute does not exist
                             if (!dataRow.changeLogForUPDATE) {
-                                dataRow.changeLogForUPDATE = [];
+                                var uid_ref = dataRow.get("uid");
+                                dataRow.changeLogForUPDATE = {operation: oper, uid_reference: uid_ref, record: []};
                             }
+                            addToChangeLogRecord (dataRow.changeLogForUPDATE, ukey, record_data);
                         }
                             break;
                         case "DELETE":
                         {
-                            // In the INSERT case, just re-initiliase the attribute as there will be only 1 INSERT event
-                            dataRow.changeLogForDELETE = [];
+                            // In the DELETE case, just re-initiliase the attribute as there will be only 1 DELETE event
+                            dataRow.changeLogForDELETE = {};
                             var uid_ref = dataRow.get("uid");
-                            dataRow.changeLogDELETE = {operation: oper, uid_reference: uid_ref, 
-                                uniqueKey: JSON.parse($scope.resolveUniqueKey(uid_ref)), record: []};
-                            addToChangeLogRecord (dataRow.changeLogDELETE,record_data);
+                            dataRow.changeLogForDELETE = {operation: oper, uid_reference: uid_ref, record: []};
+                            addToChangeLogRecord (dataRow.changeLogForDELETE, ukey, record_data);
                         }
                             break;
-                    }
-                    if (!dataRow.changeLog) {
-                        dataRow.changeLog = [];
-                    }
-                    var nextChangeLogEntry = dataRow.changeLog.length;
-                    dataRow.changeLog[nextChangeLogEntry] = {operation: oper, uid_reference: dataRow.get("uid"), record: []};
-                    addToChangeLogRecord (dataRow.changeLog[nextChangeLogEntry],record_data);
-                }
+                    };
+                };
                 //
-                addToChangeLogRecord = function (changeLog, record_data) {
+                addToChangeLogRecord = function (changeLog, ukey, record_data) {
                     var nextChangeLogRecord = changeLog.record.length;
-                    changeLog.record[nextChangeLogRecord]=record_data;
+                    changeLog.record[nextChangeLogRecord]={uniqueKey: ukey, details: record_data};
                 }
                 //
                 $scope.clearSelectionsFunction = function () {
@@ -193,7 +186,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 };
                 //
                 $scope.saveFunction = function () {
-                    console.log ("Called saveFunction");
+                    console.log ("Called Save Function");
                     $scope.gridIsDirty = false;
                     $scope.gridChangesPending = 0;
                     $scope.grid.data("kendoGrid").dataSource.sync();
@@ -333,12 +326,12 @@ angular.module("directiveExample1").directive('grid',
                     var rowData = $scope.gridDataSource.getByUid(uidForKey);
                     if (!$scope.gridOptions.dataSource.schema.model.uniqueKey) {
                         // if this has not been defined, then we use the whole record
-                        return JSON.stringify(rowData);
+                        return rowData;
                     }
                     else {
                         // Looks like key has been defined
                         var resolvedKey = copyObject (rowData,$scope.gridOptions.dataSource.schema.model.uniqueKey);
-                        return JSON.stringify(resolvedKey);
+                        return resolvedKey;
                     }
                 };
                 // copyObject - selectively copies attributes from one object to another
