@@ -134,6 +134,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         for (i=0; i<$scope.selectedRowID.length; i++) {
                             var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[i]);
                             //dataRow.changeLog = {operation: "DELETE", uid_reference: dataRow.get("uid"), record: []};
+                            console.log ("Unique Key is: "+$scope.resolveUniqueKey(dataRow.get("uid")));
                             addToChangeLog (dataRow, "DELETE", {});
                             $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         }
@@ -182,7 +183,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             schema: {
                                 model: {
                                     id: "uid",
-                                    uniqueKey: ["ContactName","ContatTitle"],
+                                    uniqueKey: ["Code","Version"],
                                     fields: {
                                         "Code": {
                                             "type": "string",
@@ -296,6 +297,31 @@ angular.module("directiveExample1").directive('grid',
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
                 };
+                // resolve the unique key
+                $scope.resolveUniqueKey = function (uidForKey) {
+                    // function returnes the JSON object of the resolved unique key as a STRING
+                    var rowData = $scope.gridDataSource.getByUid(uidForKey);
+                    if (!$scope.gridOptions.dataSource.schema.model.uniqueKey) {
+                        // if this has not been defined, then we use the whole record
+                        return JSON.stringify(rowData);
+                    }
+                    else {
+                        // Looks like key has been defined
+                        var resolvedKey = copyObject (rowData,$scope.gridOptions.dataSource.schema.model.uniqueKey);
+                        return JSON.stringify(resolvedKey);
+                    }
+                };
+                // copyObject - selectively copies attributes from one object to another
+                function copyObject (obj,attrs) {
+                    var newObj = {};
+                    for (var key in obj) {
+                        if (attrs.indexOf(key) > -1) {
+                            newObj[key] = obj[key];
+                        }
+                    }
+                    return newObj;
+                }
+                //
                 // make this function 'local' so it can be invoked by the link function of the directive
                 printObject = function (a,b) {
                     utilityFunctions.printObjectContents(a,b);
