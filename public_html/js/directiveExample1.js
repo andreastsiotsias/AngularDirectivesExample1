@@ -145,6 +145,36 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 };
                 //
                 addToChangeLog = function (dataRow, oper, record_data) {
+                    switch (oper) {
+                        case "INSERT":
+                        {
+                            // In the INSERT case, just re-initiliase the attribute as there will be only 1 INSERT event
+                            dataRow.changeLogForINSERT = [];
+                            var uid_ref = dataRow.get("uid");
+                            dataRow.changeLogINSERT = {operation: oper, uid_reference: uid_ref, 
+                                uniqueKey: JSON.parse($scope.resolveUniqueKey(uid_ref)), record: []};
+                            addToChangeLogRecord (dataRow.changeLogINSERT,record_data);
+                        }
+                            break;
+                        case "UPDATE":
+                        {
+                            
+                            if (!dataRow.changeLogForUPDATE) {
+                                dataRow.changeLogForUPDATE = [];
+                            }
+                        }
+                            break;
+                        case "DELETE":
+                        {
+                            // In the INSERT case, just re-initiliase the attribute as there will be only 1 INSERT event
+                            dataRow.changeLogForDELETE = [];
+                            var uid_ref = dataRow.get("uid");
+                            dataRow.changeLogDELETE = {operation: oper, uid_reference: uid_ref, 
+                                uniqueKey: JSON.parse($scope.resolveUniqueKey(uid_ref)), record: []};
+                            addToChangeLogRecord (dataRow.changeLogDELETE,record_data);
+                        }
+                            break;
+                    }
                     if (!dataRow.changeLog) {
                         dataRow.changeLog = [];
                     }
