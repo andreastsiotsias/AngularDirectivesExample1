@@ -205,7 +205,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         dataSource: {
                             schema: {
                                 model: {
-                                    id: "uid",
+                                    id: "uid_reference",
                                     uniqueKey: ["Code","Version"],
                                     fields: {
                                         "Code": {
@@ -223,6 +223,10 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                         "Title": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "uid_reference": {
+                                            "type": "string",
+                                            "nullable": true
                                         }
                                     }
                                 },
@@ -255,15 +259,37 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                                            $inlinecount: "allpages"
                                        };
                                     }
-                                    else {
-                                        console.log("Number of Models: "+options.models.length);
+                                    else if (operation == "create") {
+                                        console.log("Number of INSERTs: "+options.models.length);
                                         for (i=0;i<options.models.length;i++) {
-                                            console.log ("---> models["+i+"]:"+options.models[i].changeLog);
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForINSERT);
+                                        }
+                                        return {
+                                            numberOfChanges: options.models.length,
+                                            changes: kendo.stringify(options.models[0].changeLogForINSERT)
+                                            //options: kendo.stringify("{}")};
+                                        };
+                                    }
+                                    else if (operation == "update") {
+                                        console.log("Number of UPDATEs: "+options.models.length);
+                                        for (i=0;i<options.models.length;i++) {
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForUPDATE);
+                                        }
+                                        return {
+                                            numberOfChanges: options.models.length,
+                                            changes: kendo.stringify(options.models[0].changeLogForUPDATE)
+                                            //options: kendo.stringify("{}")};
+                                        };
+                                    }
+                                    else {
+                                        console.log("Number of DELETEs: "+options.models.length);
+                                        for (i=0;i<options.models.length;i++) {
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForDELETE);
                                         }
                                         //printObject(options.models[0], "Options.Models.0");
                                         return {
                                             numberOfChanges: options.models.length,
-                                            changes: kendo.stringify(options.models[0].changeLog)
+                                            changes: kendo.stringify(options.models[0].changeLogForDELETE)
                                             //options: kendo.stringify("{}")};
                                         };
                                     }
@@ -407,6 +433,8 @@ angular.module("directiveExample1").directive('grid',
                 // initialise the grid row selection event management
                 function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
+                    // add a temporary hook to the dataBound event
+                    $(scope.grid).data("kendoGrid").bind("dataBound",gridDataBound);
                 }
                 //
                 // initialise the grid data source change event management
@@ -558,6 +586,16 @@ angular.module("directiveExample1").directive('grid',
                             scope.selectedRowID = [];
                         });
                     }
+                }
+                // capture the Data Bound event - ie when the datasource is bound to the grid
+                function gridDataBound(evt) {
+                    console.log ("Grid was bound to data source");
+                    console.log ("Number of rows in the grid: "+scope.gridDataSource.total());
+                    var dsItemNumber = scope.gridDataSource.total();
+                    for (i=0; i<dsItemNumber; i++) {
+                        scope.gridDataSource._data[i].uid_reference = scope.gridDataSource._data[i].uid;
+                    }
+                    console.log ("Copied UID to REF_UID");
                 }
                 // capture and process data source sync (response from server OK) events
                 function gridDataSourceSync () {
