@@ -103,7 +103,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
                     addToChangeLog (dataRow, "INSERT", resolvedKey, dataRowTruncated);
                     $scope.gridIsDirty = true;
-                    $scope.gridChangesPending++;
+                    //$scope.gridChangesPending++;
                 };
                 //
                 $scope.retrieveFunction = function () {
@@ -123,7 +123,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     addToChangeLog (dataRow, "UPDATE", resolvedKey, {column: columnName, oldValue: dataRow.get(columnName), newValue: columnValue});
                     dataRow.set(columnName, columnValue);
                     $scope.clearSelectionsFunction();
-                    $scope.gridChangesPending++;
+                    //$scope.gridChangesPending++;
                 };
                 //
                 $scope.deleteFunction = function () {
@@ -135,7 +135,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             addToChangeLog (dataRow, "DELETE", resolvedKey, dataRowTruncated);
                             $scope.grid.data("kendoGrid").dataSource.remove(dataRow);
                         }
-                        $scope.gridChangesPending=$scope.gridChangesPending+$scope.selectedRowID.length;
+                        //$scope.gridChangesPending=$scope.gridChangesPending+$scope.selectedRowID.length;
                         $scope.clearSelectionsFunction();
                         $scope.gridIsDirty = true;
                     }
@@ -146,10 +146,11 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         case "INSERT":
                         {
                             // In the INSERT case, just re-initiliase the attribute as there will be only 1 INSERT event
-                            dataRow.changeLogForINSERT = {};
+                            //dataRow.changeLogForINSERT = {};
                             var uid_ref = dataRow.get("uid");
-                            dataRow.changeLogForINSERT = {operation: oper, uid_reference: uid_ref, record: []};
-                            addToChangeLogRecord (dataRow.changeLogForINSERT, ukey, record_data);
+                            //dataRow.changeLogForINSERT = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
+                            //addToChangeLogRecord (dataRow.changeLogForINSERT, ukey, record_data);
                         }
                             break;
                         case "UPDATE":
@@ -157,23 +158,27 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             // In the UPDATE case, we cannot reinitialise as there may be multiple changes to a single record
                             // instead, we rely on a cleanup function which is run after the SYNC operation for cleanup
                             // so, here, we check that the attribute does not exist
-                            if (!dataRow.changeLogForUPDATE) {
-                                var uid_ref = dataRow.get("uid");
-                                dataRow.changeLogForUPDATE = {operation: oper, uid_reference: uid_ref, record: []};
-                            }
-                            addToChangeLogRecord (dataRow.changeLogForUPDATE, ukey, record_data);
+                            //if (!dataRow.changeLogForUPDATE) {
+                            var uid_ref = dataRow.get("uid");
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
+                            //    dataRow.changeLogForUPDATE = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
+                            //}
+                            //addToChangeLogRecord (dataRow.changeLogForUPDATE, ukey, record_data);
                         }
                             break;
                         case "DELETE":
                         {
                             // In the DELETE case, just re-initiliase the attribute as there will be only 1 DELETE event
-                            dataRow.changeLogForDELETE = {};
+                            //dataRow.changeLogForDELETE = {};
                             var uid_ref = dataRow.get("uid");
-                            dataRow.changeLogForDELETE = {operation: oper, uid_reference: uid_ref, record: []};
-                            addToChangeLogRecord (dataRow.changeLogForDELETE, ukey, record_data);
+                            //dataRow.changeLogForDELETE = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
+                            //addToChangeLogRecord (dataRow.changeLogForDELETE, ukey, record_data);
                         }
                             break;
                     };
+                    // update the changes counter .... as this will give a better number ..... based on changeLog array length
+                    $scope.gridChangesPending = $scope.gridDataSource.changeLog.length;
                 };
                 //
                 addToChangeLogRecord = function (changeLog, ukey, record_data) {
@@ -385,7 +390,7 @@ angular.module("directiveExample1").directive('grid',
                         {"field": "col1", "title": "No Data To Display", "width": 140, "filterable": false}
                     ],
                     "dataSource" : {
-                        "batch": false,
+                        "batch": true,
                         "pageSize": 15
                     },
                     "title": "Empty data set"
@@ -434,15 +439,17 @@ angular.module("directiveExample1").directive('grid',
                 function manageRowSelectionEvents () {
                     $(scope.grid).data("kendoGrid").bind("change",gridSelection);
                     // add a temporary hook to the dataBound event
-                    $(scope.grid).data("kendoGrid").bind("dataBound",gridDataBound);
+                    //$(scope.grid).data("kendoGrid").bind("dataBound",gridDataBound);
                 }
                 //
                 // initialise the grid data source change event management
                 function manageGridDataSourceChange () {
                     scope.gridDataSource = $(scope.grid).data("kendoGrid").dataSource;
+                    // initialise the Chage Log to an empty array
+                    scope.gridDataSource.changeLog = [];
                     scope.gridDataSource.bind("change",gridDataSourceChange);
-                    scope.gridDataSource.bind("sync",gridDataSourceSync);
-                    scope.gridDataSource.bind("error",gridDataSourceError);
+                    //scope.gridDataSource.bind("sync",gridDataSourceSync);
+                    //scope.gridDataSource.bind("error",gridDataSourceError);
                 }
                 //
                 // initialise the reset on pager button event management
@@ -455,6 +462,7 @@ angular.module("directiveExample1").directive('grid',
                 function pagerRefreshClicked () {
                     scope.$apply (function() {
                         scope.gridIsDirty = false;
+                        scope.gridDataSource.changeLog = [];
                         scope.areRowsSelected = false;
                         scope.rowsSelected = 0;
                         scope.selectedRowID = [];
@@ -588,23 +596,23 @@ angular.module("directiveExample1").directive('grid',
                     }
                 }
                 // capture the Data Bound event - ie when the datasource is bound to the grid
-                function gridDataBound(evt) {
-                    console.log ("Grid was bound to data source");
-                    console.log ("Number of rows in the grid: "+scope.gridDataSource.total());
-                    var dsItemNumber = scope.gridDataSource.total();
-                    for (i=0; i<dsItemNumber; i++) {
-                        scope.gridDataSource._data[i].uid_reference = scope.gridDataSource._data[i].uid;
-                    }
-                    console.log ("Copied UID to REF_UID");
-                }
+                //function gridDataBound(evt) {
+                //    console.log ("Grid was bound to data source");
+                //    console.log ("Number of rows in the grid: "+scope.gridDataSource.total());
+                //    var dsItemNumber = scope.gridDataSource.total();
+                //    for (i=0; i<dsItemNumber; i++) {
+                //        scope.gridDataSource._data[i].uid_reference = scope.gridDataSource._data[i].uid;
+                //    }
+                //    console.log ("Copied UID to REF_UID");
+                //}
                 // capture and process data source sync (response from server OK) events
-                function gridDataSourceSync () {
-                    console.log ("Datasource SYNC completed OK");
-                }
+                //function gridDataSourceSync () {
+                //    console.log ("Datasource SYNC completed OK");
+                //}
                 // capture and process data source error (response from server NOT OK) events
-                function gridDataSourceError (evt) {
-                    console.log ("Datasource Server-Comms Error: "+evt.status);
-                }
+                //function gridDataSourceError (evt) {
+                //    console.log ("Datasource Server-Comms Error: "+evt.status);
+                //}
             }
         };
     });
