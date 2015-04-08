@@ -128,7 +128,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.deleteFunction = function () {
                     if (confirm("Are you sure ?")) {
-                        for (var i=0; i<$scope.selectedRowID.length; i++) {
+                        for (i=0; i<$scope.selectedRowID.length; i++) {
                             var dataRow = $scope.grid.data("kendoGrid").dataSource.getByUid($scope.selectedRowID[i]);
                             var dataRowTruncated = JSON.parse(JSON.stringify(dataRow));
                             var resolvedKey = $scope.resolveUniqueKey(dataRow.get("uid"));
@@ -149,8 +149,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             //dataRow.changeLogForINSERT = {};
                             var uid_ref = dataRow.get("uid");
                             //dataRow.changeLogForINSERT = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
-                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref,
-                                uniquekey: ukey, record: record_data});
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
                             //addToChangeLogRecord (dataRow.changeLogForINSERT, ukey, record_data);
                         }
                             break;
@@ -161,8 +160,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             // so, here, we check that the attribute does not exist
                             //if (!dataRow.changeLogForUPDATE) {
                             var uid_ref = dataRow.get("uid");
-                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref,
-                                uniqueKey: ukey, record: record_data});
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
                             //    dataRow.changeLogForUPDATE = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
                             //}
                             //addToChangeLogRecord (dataRow.changeLogForUPDATE, ukey, record_data);
@@ -174,8 +172,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             //dataRow.changeLogForDELETE = {};
                             var uid_ref = dataRow.get("uid");
                             //dataRow.changeLogForDELETE = {operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}};
-                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref,
-                                uniqueKey: ukey, record: record_data});
+                            $scope.gridDataSource.changeLog.push({operation: oper, uid_reference: uid_ref, record: {uniqueKey: ukey, details: record_data}});
                             //addToChangeLogRecord (dataRow.changeLogForDELETE, ukey, record_data);
                         }
                             break;
@@ -197,30 +194,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     console.log ("Called Save Function");
                     $scope.gridIsDirty = false;
                     $scope.gridChangesPending = 0;
-                    //$scope.grid.data("kendoGrid").dataSource.sync();
-                    processChange ("http://localhost:8080/ATDataGridWork/GoodsOperations", {numberOfChanges: 1});
-                };
-                //
-                processChange = function (url, changeRecord) {
-                    $scope.saveInProgress = true;
-                    $.ajax({
-                        url: url+"?"+JSON.stringify(changeRecord),
-                        type: 'GET',
-                        dataType: "json",
-                        contentType: "application/json",
-                        success: processChangeSuccess,
-                        error: processChangeError
-                    });
-                };
-                //
-                processChangeSuccess = function (response) {
-                    $scope.saveInProgress = false;
-                    console.log ("Call to AJAX succeeded. Response: "+JSON.stringify(response));
-                };
-                //
-                processChangeError = function (response) {
-                    $scope.saveInProgress = false;
-                    console.log ("Call to AJAX failed. Response: "+JSON.stringify(response));
+                    $scope.grid.data("kendoGrid").dataSource.sync();
                 };
                 //
                 $scope.loadNewGrid = function () {
@@ -265,67 +239,66 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                             transport: {
                                 read: {
                                     url: "./Goods.json"
+                                },
+                                create: {
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
+                                    dataType: "jsonp",
+                                    contentType: "application/json"
+                                },
+                                destroy: {
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
+                                    dataType: "jsonp",
+                                    contentType: "application/json"
+                                },
+                                update: {
+                                    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
+                                    dataType: "jsonp",
+                                    contentType: "application/json"
                                 }
-                                //,
-                                //create: {
-                                //    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
-                                //    dataType: "jsonp",
-                                //    contentType: "application/json"
-                                //},
-                                //destroy: {
-                                //    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
-                                //    dataType: "jsonp",
-                                //    contentType: "application/json"
-                                //},
-                                //update: {
-                                //    url: "http://localhost:8080/ATDataGridWork/GoodsOperations",
-                                //    dataType: "jsonp",
-                                //    contentType: "application/json"
-                                //}
-                                //,
-                                //parameterMap: function(options, operation) {
-                                //    //console.log ("Parameter Map type: "+operation);
-                                //   if (operation == "read") {
-                                //       return {
-                                //           $format: "json",
-                                //           $inlinecount: "allpages"
-                                //       };
-                                //    }
-                                //    else if (operation == "create") {
-                                //        console.log("Number of INSERTs: "+options.models.length);
-                                //        for (i=0;i<options.models.length;i++) {
-                                //            console.log ("---> models["+i+"]:"+options.models[i].changeLogForINSERT);
-                                //        }
-                                //        return {
-                                //            numberOfChanges: options.models.length,
-                                //            changes: kendo.stringify(options.models[0].changeLogForINSERT)
-                                //            //options: kendo.stringify("{}")};
-                                //        };
-                                //    }
-                                //    else if (operation == "update") {
-                                //        console.log("Number of UPDATEs: "+options.models.length);
-                                //        for (i=0;i<options.models.length;i++) {
-                                //            console.log ("---> models["+i+"]:"+options.models[i].changeLogForUPDATE);
-                                //        }
-                                //        return {
-                                //            numberOfChanges: options.models.length,
-                                //            changes: kendo.stringify(options.models[0].changeLogForUPDATE)
-                                //            //options: kendo.stringify("{}")};
-                                //        };
-                                //    }
-                                //    else {
-                                //        console.log("Number of DELETEs: "+options.models.length);
-                                //        for (i=0;i<options.models.length;i++) {
-                                //            console.log ("---> models["+i+"]:"+options.models[i].changeLogForDELETE);
-                                //        }
-                                //        //printObject(options.models[0], "Options.Models.0");
-                                //        return {
-                                //            numberOfChanges: options.models.length,
-                                //            changes: kendo.stringify(options.models[0].changeLogForDELETE)
-                                //            //options: kendo.stringify("{}")};
-                                //        };
-                                //    }
-                                //}
+                                ,
+                                parameterMap: function(options, operation) {
+                                    //console.log ("Parameter Map type: "+operation);
+                                   if (operation == "read") {
+                                       return {
+                                           $format: "json",
+                                           $inlinecount: "allpages"
+                                       };
+                                    }
+                                    else if (operation == "create") {
+                                        console.log("Number of INSERTs: "+options.models.length);
+                                        for (i=0;i<options.models.length;i++) {
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForINSERT);
+                                        }
+                                        return {
+                                            numberOfChanges: options.models.length,
+                                            changes: kendo.stringify(options.models[0].changeLogForINSERT)
+                                            //options: kendo.stringify("{}")};
+                                        };
+                                    }
+                                    else if (operation == "update") {
+                                        console.log("Number of UPDATEs: "+options.models.length);
+                                        for (i=0;i<options.models.length;i++) {
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForUPDATE);
+                                        }
+                                        return {
+                                            numberOfChanges: options.models.length,
+                                            changes: kendo.stringify(options.models[0].changeLogForUPDATE)
+                                            //options: kendo.stringify("{}")};
+                                        };
+                                    }
+                                    else {
+                                        console.log("Number of DELETEs: "+options.models.length);
+                                        for (i=0;i<options.models.length;i++) {
+                                            console.log ("---> models["+i+"]:"+options.models[i].changeLogForDELETE);
+                                        }
+                                        //printObject(options.models[0], "Options.Models.0");
+                                        return {
+                                            numberOfChanges: options.models.length,
+                                            changes: kendo.stringify(options.models[0].changeLogForDELETE)
+                                            //options: kendo.stringify("{}")};
+                                        };
+                                    }
+                                }
                             },
                             batch: true,
                             pageSize: 20
@@ -374,8 +347,6 @@ angular.module("directiveExample1").directive('grid',
                 $scope.gridIsDirty = false;
                 $scope.gridDataSource;
                 $scope.gridChangesPending = 0;
-                $scope.saveInProgress = false;
-                $scope.saveProgressValue = 0;
                 //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
