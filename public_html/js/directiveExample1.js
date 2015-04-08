@@ -199,6 +199,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     console.log ("Called Save Function");
                     $scope.gridChangesPending = $scope.gridDataSource.changeLog.length;
                     $scope.saveProgressValue = 0;
+                    $scope.saveProgressValuePercent = ($scope.saveProgressValue/($scope.saveProgressValue + $scope.gridChangesPending))*100;
                     //$scope.grid.data("kendoGrid").dataSource.sync();
                     // do this only for the first element in the changeLog array
                     var firstChangeRecord = $scope.gridDataSource.changeLog.shift();
@@ -228,7 +229,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.$apply (function() {
                         $scope.gridChangesPending = $scope.gridDataSource.changeLog.length;
                         $scope.saveProgressValue++;
+                        $scope.saveProgressValuePercent = ($scope.saveProgressValue/($scope.saveProgressValue + $scope.gridChangesPending))*100;
                     });
+                    console.log ("Saved so far: "+$scope.saveProgressValuePercent);
                     console.log ("Changes to save remaining: "+$scope.gridChangesPending);
                     if ($scope.gridDataSource.changeLog.length > 0) {
                         var changeRecord = $scope.gridDataSource.changeLog.shift();
@@ -248,7 +251,7 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.$apply (function() {
                         $scope.saveInProgress = false;
                         // and hide the progress modal
-                        $($scope.saveProgressModal).modal('hide');
+                        //$($scope.saveProgressModal).modal('hide');
                     });
                     console.log ("Call to AJAX failed. Response: "+JSON.stringify(response));
                 };
@@ -407,6 +410,7 @@ angular.module("directiveExample1").directive('grid',
                 $scope.dataSourceSaveURL = "http://localhost:8080/ATDataGridWork/GoodsOperations";
                 $scope.saveInProgress = false;
                 $scope.saveProgressValue = 0;
+                $scope.saveProgressValuePercent = 0;
                 //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);
