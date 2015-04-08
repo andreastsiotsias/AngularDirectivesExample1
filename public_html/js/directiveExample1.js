@@ -203,6 +203,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     // do this only for the first element in the changeLog array
                     var firstChangeRecord = $scope.gridDataSource.changeLog.shift();
                     processChange ($scope.dataSourceSaveURL, firstChangeRecord);
+                    // and show the progress modal
+                    $($scope.saveProgressModal).modal({backdrop:'static',keyboard:false, show:true});
                 };
                 //
                 processChange = function (url, changeRecord) {
@@ -236,6 +238,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         $scope.$apply (function() {
                             $scope.saveInProgress = false;
                             $scope.gridIsDirty = false;
+                            // and hide the progress modal
+                            $($scope.saveProgressModal).modal('hide');
                         });
                     }
                 };
@@ -243,6 +247,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 processChangeError = function (response) {
                     $scope.$apply (function() {
                         $scope.saveInProgress = false;
+                        // and hide the progress modal
+                        $($scope.saveProgressModal).modal('hide');
                     });
                     console.log ("Call to AJAX failed. Response: "+JSON.stringify(response));
                 };
@@ -563,11 +569,18 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // create the MODAL to go with the grid
                 function createModals () {
+                    // first, the CREATE item modal
                     var createModalElement = angular.element('<div grid-create-modal></div>');
                     var compiledGridCreateModalElement = $compile(createModalElement);
                     compiledGridCreateModalElement(scope);
                     $(scope.grid).append(createModalElement);
                     scope.createModal = createModalElement;
+                    // the SavePROGRESS modal
+                    var saveProgressModalElement = angular.element('<div grid-save-progress-modal></div>');
+                    var compiledGridSaveProgressModalElement = $compile(saveProgressModalElement);
+                    compiledGridSaveProgressModalElement(scope);
+                    $(scope.grid).append(saveProgressModalElement);
+                    scope.saveProgressModal = saveProgressModalElement;
                 };
                 //
                 // initiliase variables for grid resize events and management
@@ -689,5 +702,19 @@ angular.module("directiveExample1").directive('gridCreateModal',
             },
             link: function(scope, el, attr) {
                 }
+        }
+    });
+    
+angular.module("directiveExample1").directive('gridSaveProgressModal', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/gridSaveProgressModal.html',
+            replace: true,
+            scope: false,
+            controller: function($scope, $element, utilityFunctions){
+            },
+            link: function(scope, el, attr) {
+            }
         }
     });
