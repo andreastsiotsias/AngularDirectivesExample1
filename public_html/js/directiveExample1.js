@@ -94,7 +94,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         "Code": "30-1234",
                         "Version": "A",
                         "Maturity": "Created",
-                        "Title": "A sample item for testing purposes"
+                        "Title": "A sample item for testing purposes",
+                        "Price": 23.59,
+                        "Units": 18
                     };
                     $scope.gridDataSource.insert(0, insertItem);
                     // get the UID of the new row and use it to populate the change log
@@ -195,31 +197,53 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.saveFunction = function () {
                     console.log ("Called Save Function");
-                    $scope.gridIsDirty = false;
-                    $scope.gridChangesPending = 0;
+                    $scope.gridChangesPending = $scope.gridDataSource.changeLog.length;
+                    $scope.saveProgressValue = 0;
                     //$scope.grid.data("kendoGrid").dataSource.sync();
-                    processChange ("http://localhost:8080/ATDataGridWork/GoodsOperations", {numberOfChanges: 1});
+                    // do this only for the first element in the changeLog array
+                    var firstChangeRecord = $scope.gridDataSource.changeLog.shift();
+                    processChange ($scope.dataSourceSaveURL, firstChangeRecord);
                 };
                 //
                 processChange = function (url, changeRecord) {
                     $scope.saveInProgress = true;
                     $.ajax({
-                        url: url+"?"+JSON.stringify(changeRecord),
+                        url: url,
                         type: 'GET',
                         dataType: "json",
                         contentType: "application/json",
+                        data: {
+                            "numberOfChanges": 1,
+                            "changeRecord": JSON.stringify(changeRecord)
+                        },
                         success: processChangeSuccess,
                         error: processChangeError
                     });
                 };
                 //
                 processChangeSuccess = function (response) {
-                    $scope.saveInProgress = false;
                     console.log ("Call to AJAX succeeded. Response: "+JSON.stringify(response));
+                    $scope.$apply (function() {
+                        $scope.gridChangesPending = $scope.gridDataSource.changeLog.length;
+                        $scope.saveProgressValue++;
+                    });
+                    console.log ("Changes to save remaining: "+$scope.gridChangesPending);
+                    if ($scope.gridDataSource.changeLog.length > 0) {
+                        var changeRecord = $scope.gridDataSource.changeLog.shift();
+                        processChange ($scope.dataSourceSaveURL, changeRecord);
+                    }
+                    else {
+                        $scope.$apply (function() {
+                            $scope.saveInProgress = false;
+                            $scope.gridIsDirty = false;
+                        });
+                    }
                 };
                 //
                 processChangeError = function (response) {
-                    $scope.saveInProgress = false;
+                    $scope.$apply (function() {
+                        $scope.saveInProgress = false;
+                    });
                     console.log ("Call to AJAX failed. Response: "+JSON.stringify(response));
                 };
                 //
@@ -374,6 +398,7 @@ angular.module("directiveExample1").directive('grid',
                 $scope.gridIsDirty = false;
                 $scope.gridDataSource;
                 $scope.gridChangesPending = 0;
+                $scope.dataSourceSaveURL = "http://localhost:8080/ATDataGridWork/GoodsOperations";
                 $scope.saveInProgress = false;
                 $scope.saveProgressValue = 0;
                 //
