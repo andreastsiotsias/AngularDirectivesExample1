@@ -88,6 +88,35 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             scope: false,
             controller: function($scope, $element, utilityFunctions){
                 //
+                $scope.doGoogleSignIn = function () {
+                    console.log ("Pressed Google Sign In button");
+                    $scope.isAuthenticated = true;
+                    var signInOptions = {
+                        'callback' : $scope.loginFinished,
+                        'approvalprompt' : 'force',
+                        'clientid' : '815038451936-611r1ll7e9tkdl1kvhhvc9dokp5e9176.apps.googleusercontent.com',
+                        'scope' : 'https://www.googleapis.com/auth/userinfo.email',
+                        'cookiepolicy' : 'single_host_origin'
+                    };
+                    gapi.auth.signIn(signInOptions);
+                    //
+                };
+                //
+                $scope.loginFinished = function (authResult) {
+                        if (authResult['status']['signed_in']) {
+                            console.log ("Login succeeded");
+                            console.log ("Access Token: "+authResult['access_token']);
+                        } 
+                        else {
+                            console.log('Sign-in state: ' + authResult['error']);
+                        }
+                };
+                //
+                $scope.doGoogleSignOut = function () {
+                    console.log ("Pressed Google Sign Out button");
+                    $scope.isAuthenticated = false;
+                };
+                //
                 $scope.createFunction = function () {
                     //***** LEAVE THIS ALONE ****** $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});
                     var insertItem = {
@@ -411,6 +440,7 @@ angular.module("directiveExample1").directive('grid',
                 $scope.saveInProgress = false;
                 $scope.saveProgressValue = 0;
                 $scope.saveProgressValuePercent = 0;
+                $scope.isAuthenticated = false;
                 //
                 $scope.createGrid = function (a,b) {
                     $scope.initialiseGrid (a,b);

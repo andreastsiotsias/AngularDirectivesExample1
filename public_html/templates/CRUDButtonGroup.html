@@ -1,4 +1,8 @@
 <div class="btn-group navbar-right" style="padding-right: 20px;background: transparent;">
+    <button type="button" class="btn btn-danger grid-signin-button" ng-click="doGoogleSignIn()"
+            ng-show="!isAuthenticated">Sign In</button>
+    <button type="button" class="btn btn-danger grid-signout-button" ng-click="doGoogleSignOut()"
+            ng-show="isAuthenticated">Sign Out</button>
     <button type="button" class="btn btn-warning grid-save-button" ng-click="saveFunction()"
         ng-show="gridIsDirty">Save
         <span class="badge" ng-model="gridChangesPending">{{gridChangesPending}}</span> Changes</button>
