@@ -216,8 +216,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                         dataType: "json",
                         contentType: "application/json",
                         data: {
-                            "numberOfChanges": 1,
-                            "changeRecord": JSON.stringify(changeRecord)
+                            "Operation": changeRecord.OPERATION,
+                            "Record": JSON.stringify(changeRecord)
                         },
                         success: processChangeSuccess,
                         error: processChangeError
