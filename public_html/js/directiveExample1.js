@@ -242,11 +242,12 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.saveInProgress = true;
                     $.ajax({
                         url: url,
-                        type: 'GET',
-                        dataType: "json",
-                        contentType: "application/json",
+                        type: 'POST',
+                        //dataType: "json",
+                        //contentType: "application/json",
                         data: {
-                            "Operation": changeRecord.OPERATION,
+                            "Accesskey": null,
+                            "Operation": changeRecord.operation,
                             "Record": JSON.stringify(changeRecord)
                         },
                         success: processChangeSuccess,
