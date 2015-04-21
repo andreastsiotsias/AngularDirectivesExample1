@@ -104,8 +104,8 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 //
                 $scope.loginFinished = function (authResult) {
                         if (authResult['status']['signed_in']) {
-                            console.log ("Login succeeded");
-                            $scope.signinRecord = authResult;
+                            console.log ("Login succeeded on "+Math.floor(Date.now() / 1000));
+                            //$scope.signinRecord = authResult;
                             //console.log ("Access Record: "+$scope.signinRecord);
                         } 
                         else {
