@@ -105,17 +105,44 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                 $scope.loginFinished = function (authResult) {
                         if (authResult['status']['signed_in']) {
                             console.log ("Login succeeded on "+Math.floor(Date.now() / 1000));
-                            $scope.isAuthenticated = true;
                             //$scope.signinRecord = authResult;
                             console.log ("Access Token: "+authResult['access_token']);
                             console.log ("Client ID: "+authResult['client_id']);
                             console.log ("Expires At: "+authResult['expires_at']);
                             console.log ("Granted At: "+authResult['issued_at']);
                             console.log ("Sessions Number: "+authResult['num_sessions']);
+                            registerAuthentication($scope.dataSourceManagerURL,authResult['access_token'],authResult['issued_at'],authResult['expires_at']);
                         } 
                         else {
                             console.log('Sign-in state: ' + authResult['error']);
+                            alert ("Authentication Error");
                         }
+                };
+                //
+                registerAuthentication = function (manager_url,access_token,issued_at,expires_at) {
+                    $.ajax({
+                        url: manager_url,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        type: 'POST',
+                        data: {
+                            "Operation": "REGISTER_AUTHENTICATION",
+                            "Access_Token": access_token,
+                            "Issued_At": issued_at,
+                            "Expires_At": expires_at
+                        },
+                        success: function (response) {
+                            console.log ("Authentication Registered with Data Object Profile Manager - OK");
+                            $scope.$apply (function() {
+                                $scope.isAuthenticated = true;
+                            });
+                                                        
+                        },
+                        error: function (response) {
+                            alert ("Authentication registration Failed - NOT OK");
+                        }
+                    });
                 };
                 //
                 $scope.doGoogleSignOut = function () {
@@ -247,6 +274,9 @@ angular.module("directiveExample1").directive('crudButtonGroup',
                     $scope.saveInProgress = true;
                     $.ajax({
                         url: url,
+                        xhrFields: {
+                            withCredentials: true
+                        },
                         type: 'POST',
                         //dataType: "json",
                         //contentType: "application/json",
@@ -444,6 +474,7 @@ angular.module("directiveExample1").directive('grid',
                 $scope.gridDataSource;
                 $scope.gridChangesPending = 0;
                 $scope.dataSourceSaveURL = "http://localhost:8080/ATDataGridWork/GoodsOperations";
+                $scope.dataSourceManagerURL = "http://localhost:8080/ATDataGridWork/DataObjectProfileManager";
                 $scope.saveInProgress = false;
                 $scope.saveProgressValue = 0;
                 $scope.saveProgressValuePercent = 0;
