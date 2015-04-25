@@ -1,28 +1,31 @@
 {
+    "elements": {
+        "example-directive": {}
+    },
     "attributes": {
+        "crud-button-group": {
+            "context": "div"
+        },
         "password-input-field": {
-            "context": "div"
-        },
-        "email-inputfield": {
-            "context": "div"
-        },
-        "example-directive2": {
-            "context": "div"
-        },
-        "email-input-field": {
             "context": "div"
         },
         "grid": {
             "context": "div"
         },
-        "crud-button-group": {
+        "google-plus-sign-in-button": {
+            "context": "div"
+        },
+        "email-inputfield": {
             "context": "div"
         },
         "aria-expanded": {
             "context": "button"
+        },
+        "email-input-field": {
+            "context": "div"
+        },
+        "example-directive2": {
+            "context": "div"
         }
-    },
-    "elements": {
-        "example-directive": {}
     }
 }

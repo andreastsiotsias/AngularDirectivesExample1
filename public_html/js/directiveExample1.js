@@ -4,6 +4,49 @@
 
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
+    googlePlusLoginFinished = function (authResult) {
+        if (authResult['status']['signed_in']) {
+            console.log ("Login succeeded on "+Math.floor(Date.now() / 1000));
+            //$scope.signinRecord = authResult;
+            console.log ("Access Token: "+authResult['access_token']);
+            console.log ("Client ID: "+authResult['client_id']);
+            console.log ("Expires At: "+authResult['expires_at']);
+            console.log ("Granted At: "+authResult['issued_at']);
+            console.log ("Sessions Number: "+authResult['num_sessions']);
+            registerAuthentication(
+                'http://localhost:8080/ATDataGridWork/DataObjectProfileManager',
+                authResult['access_token'],
+                authResult['issued_at'],
+                authResult['expires_at']);
+        } 
+        else {
+            console.log('Sign-in state: ' + authResult['error']);
+            alert ("Authentication Error");
+        }
+    };
+    //
+    registerAuthentication = function (manager_url,access_token,issued_at,expires_at) {
+        $.ajax({
+            url: manager_url,
+            xhrFields: {
+                withCredentials: true
+            },
+            type: 'POST',
+            data: {
+                "Operation": "REGISTER_AUTHENTICATION",
+                "Access_Token": access_token,
+                "Issued_At": issued_at,
+                "Expires_At": expires_at
+            },
+            success: function (response) {
+                console.log ("Authentication Registered with Data Object Profile Manager - OK");                                           
+            },
+            error: function (response) {
+                alert ("Authentication registration Failed - NOT OK");
+            }
+        });
+    };
+
 angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTTPDataService', 'utilityFunctions',
     function($scope, jsonpHTTPDataService, utilityServices) {
         $scope.testvar = "A sample string from MainCtrl";
@@ -19,7 +62,7 @@ angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTT
             console.log("httpData = "+JSON.stringify(httpData.data));
             $scope.goods = result.data;
         });
-                
+        
 }]);
 
 angular.module("directiveExample1").directive('exampleDirective', 
@@ -87,68 +130,6 @@ angular.module("directiveExample1").directive('crudButtonGroup',
             replace: true,
             scope: false,
             controller: function($scope, $element, utilityFunctions){
-                //
-                $scope.doGoogleSignIn = function () {
-                    console.log ("Pressed Google Sign In button");
-                    var signInOptions = {
-                        'callback' : $scope.loginFinished,
-                        'approvalprompt' : 'force',
-                        'clientid' : '815038451936-611r1ll7e9tkdl1kvhhvc9dokp5e9176.apps.googleusercontent.com',
-                        //'clientid' : '841077041629.apps.googleusercontent.com',
-                        'scope' : 'https://www.googleapis.com/auth/userinfo.email',
-                        'cookiepolicy' : 'single_host_origin'
-                    };
-                    gapi.auth.signIn(signInOptions);
-                    //
-                };
-                //
-                $scope.loginFinished = function (authResult) {
-                        if (authResult['status']['signed_in']) {
-                            console.log ("Login succeeded on "+Math.floor(Date.now() / 1000));
-                            //$scope.signinRecord = authResult;
-                            console.log ("Access Token: "+authResult['access_token']);
-                            console.log ("Client ID: "+authResult['client_id']);
-                            console.log ("Expires At: "+authResult['expires_at']);
-                            console.log ("Granted At: "+authResult['issued_at']);
-                            console.log ("Sessions Number: "+authResult['num_sessions']);
-                            registerAuthentication($scope.dataSourceManagerURL,authResult['access_token'],authResult['issued_at'],authResult['expires_at']);
-                        } 
-                        else {
-                            console.log('Sign-in state: ' + authResult['error']);
-                            alert ("Authentication Error");
-                        }
-                };
-                //
-                registerAuthentication = function (manager_url,access_token,issued_at,expires_at) {
-                    $.ajax({
-                        url: manager_url,
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        type: 'POST',
-                        data: {
-                            "Operation": "REGISTER_AUTHENTICATION",
-                            "Access_Token": access_token,
-                            "Issued_At": issued_at,
-                            "Expires_At": expires_at
-                        },
-                        success: function (response) {
-                            console.log ("Authentication Registered with Data Object Profile Manager - OK");
-                            $scope.$apply (function() {
-                                $scope.isAuthenticated = true;
-                            });
-                                                        
-                        },
-                        error: function (response) {
-                            alert ("Authentication registration Failed - NOT OK");
-                        }
-                    });
-                };
-                //
-                $scope.doGoogleSignOut = function () {
-                    console.log ("Pressed Google Sign Out button");
-                    $scope.isAuthenticated = false;
-                };
                 //
                 $scope.createFunction = function () {
                     //***** LEAVE THIS ALONE ****** $($scope.createModal).modal({backdrop:'static',keyboard:false, show:true});

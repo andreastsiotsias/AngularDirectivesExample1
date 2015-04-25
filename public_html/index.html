@@ -24,6 +24,8 @@ and open the template in the editor.
         <!-- Latest compiled and minified KENDO UI CSS -->
         <link rel="stylesheet" href="http://cdn.kendostatic.com/2014.1.318/styles/kendo.common.min.css" />
         <link rel="stylesheet" href="http://cdn.kendostatic.com/2014.1.318/styles/kendo.default.min.css" />
+        <!-- Google Sign-In Script -->
+        <script src="https://plus.google.com/js/client:platform.js" type="text/javascript"></script>
         <!-- Local CSS -->
         <link rel="stylesheet" href="./css/directiveExample1.css" />
         <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -35,6 +37,13 @@ and open the template in the editor.
             <tr email-input-field></tr>
             <tr password-input-field></tr>
         </table>
+        <div class="g-signin"
+            data-callback="googlePlusLoginFinished"
+            data-approvalprompt="force"
+            data-clientid="815038451936-611r1ll7e9tkdl1kvhhvc9dokp5e9176.apps.googleusercontent.com"
+            data-scope="https://www.googleapis.com/auth/userinfo.email"
+            data-cookiepolicy="single_host_origin"
+        ></div>
         <div class="grid-container" grid></div>
         </body>
 </html>
