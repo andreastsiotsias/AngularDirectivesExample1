@@ -31,19 +31,18 @@ and open the template in the editor.
         <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     </head>
     <body ng-controller="MainCtrl">
+        <div class="g-signin"
+            data-callback="googlePlusLoginFinished"
+            data-approvalprompt="force"
+            data-clientid="779306128660-oifef8cadlkgapshmob99df5jhvf193e.apps.googleusercontent.com"
+            data-scope="https://www.googleapis.com/auth/userinfo.email"
+            data-cookiepolicy="single_host_origin"></div>
         <example-directive isovar="testvar" callback="mainCtrlCallback()"></example-directive>
         <p>Returned value : {{testvar}}</p>
         <table>
             <tr email-input-field></tr>
             <tr password-input-field></tr>
         </table>
-        <div class="g-signin"
-            data-callback="googlePlusLoginFinished"
-            data-approvalprompt="force"
-            data-clientid="779306128660-oifef8cadlkgapshmob99df5jhvf193e.apps.googleusercontent.com"
-            data-scope="https://www.googleapis.com/auth/userinfo.email"
-            data-cookiepolicy="single_host_origin"
-        ></div>
         <div class="grid-container" grid></div>
         </body>
 </html>
