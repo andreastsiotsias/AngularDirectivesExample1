@@ -122,6 +122,20 @@ angular.module("directiveExample1").directive('passwordInputField',
         }
     });
     
+    angular.module("directiveExample1").directive('crudDropUpButtonGroup', 
+    function() {
+        return {
+            restrict: 'A',
+            templateUrl: './templates/CRUDDropUpButtonGroup.html',
+            replace: true,
+            scope: false,
+            controller: function($scope, $element, utilityFunctions){   
+            },
+            link: function(scope, el, attr) {
+            }
+        };
+    });
+    
 angular.module("directiveExample1").directive('crudButtonGroup', 
     function() {
         return {
@@ -534,6 +548,7 @@ angular.module("directiveExample1").directive('grid',
                     // set the title from the grid configuration array
                     scope.gridTitle = gridConfig.title;
                     createNavbarControls();
+                    createFootbarControls();
                     createModals();
                     // and make sure it fits snugly and adapts to window resizing
                     initialiseResizeGrid();
@@ -618,6 +633,23 @@ angular.module("directiveExample1").directive('grid',
                     var compiledCRUDElement = $compile(crudElement);
                     compiledCRUDElement(scope);
                     $(scope.navbar).append(crudElement);
+                };
+                //
+                // create the Footbar and associated controls
+                function createFootbarControls () {
+                    scope.footbar = scope.grid[0].querySelector('.k-grid-pager');
+                    scope.footbar.style.overflow = "visible";
+                    //scope.footbar = scope.grid[0];
+                    console.log ("Pager is : "+scope.footbar);
+                    var footDivElement = angular.element(
+                            '<span class="k-pager-footbar" style="float: right;"></span>');
+                    var compiledFootDivElement = $compile(footDivElement);
+                    compiledFootDivElement(scope);
+                    $(footDivElement).insertBefore(scope.footbar.lastChild);
+                    var crudDropUpElement = angular.element('<div crud-drop-up-button-group></div>');
+                    var compiledCRUDDropUpElement = $compile(crudDropUpElement);
+                    compiledCRUDDropUpElement(scope);
+                    $(footDivElement).append(crudDropUpElement);
                 };
                 //
                 // create the MODAL to go with the grid
