@@ -1,10 +1,10 @@
 <div class="btn-group dropup navbar-right" style="padding-right: 20px;background: transparent;">
     <button type="button" class="btn btn-warning grid-save-button" ng-click="saveFunction()"
-        ng-show="gridIsDirty">Save
+        ng-show="gridIsDirty" style="padding-top: 4px; padding-bottom: 4px;">Save
         <span class="badge" ng-model="gridChangesPending">{{gridChangesPending}}</span> Changes</button>
     <button type="button" class="btn btn-info grid-create-button" ng-click="createFunction()"
-            ng-disabled="!gridOptions.createAllowed">Create New Record</button>
-    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            ng-disabled="!gridOptions.createAllowed" style="padding-top: 4px; padding-bottom: 4px;">Create New Record</button>
+    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="padding-top: 4px; padding-bottom: 4px;">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
