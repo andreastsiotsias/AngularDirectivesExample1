@@ -26,6 +26,7 @@ angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
     };
     //
     registerAuthentication = function (manager_url,access_token,issued_at,expires_at) {
+        $('#processing-indicator').modal({backdrop:'static',keyboard:false, show:true});
         $.ajax({
             url: manager_url,
             xhrFields: {
@@ -39,9 +40,11 @@ angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
                 "Expires_At": expires_at
             },
             success: function (response) {
-                console.log ("Authentication Registered with Data Object Profile Manager - OK");                                           
+                $('#processing-indicator').modal('hide');
+                console.log ("Authentication Registered with Data Object Profile Manager - OK");
             },
             error: function (response) {
+                $('#processing-indicator').modal('hide');
                 alert ("Authentication registration Failed - NOT OK");
             }
         });
