@@ -1,26 +1,33 @@
 <div class="btn-group dropup navbar-right" style="padding-right: 20px;background: transparent;">
     <button type="button" class="btn btn-warning grid-save-button" ng-click="saveFunction()"
-        ng-show="gridIsDirty" style="padding-top: 4px; padding-bottom: 4px;">Save
-        <span class="badge" ng-model="gridChangesPending">{{gridChangesPending}}</span> Changes</button>
+        ng-show="gridIsDirty" style="padding-top: 4px; padding-bottom: 4px;">
+        <i class="fa fa-floppy-o"></i> Save
+        <span class="badge" ng-model="gridChangesPending">{{gridChangesPending}}</span></button>
     <button type="button" class="btn btn-info grid-create-button" ng-click="createFunction()"
-            ng-disabled="!gridOptions.createAllowed" style="padding-top: 4px; padding-bottom: 4px;">Create New Record</button>
+            ng-disabled="!gridOptions.createAllowed" style="padding-top: 4px; padding-bottom: 4px;">
+        <i class="fa fa-plus-circle"></i> Create</button>
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="padding-top: 4px; padding-bottom: 4px;">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
     <ul class="dropdown-menu" role="menu">
         <li class="grid-create-link"><a href="#" ng-click="createFunction()"
-            ng-show="gridOptions.createAllowed">Create New Record</a></li>
+            ng-show="gridOptions.createAllowed"><i class="fa fa-plus-circle"></i> Create</a></li>
         <li class="grid-retrieve-link"><a href="#" ng-click="retrieveFunction()"
-            ng-show="gridOptions.retrieveAllowed && rowsSelected === 1">Retrieve Full Record</a></li>
+            ng-show="gridOptions.retrieveAllowed && rowsSelected === 1">
+                <i class="fa fa-ellipsis-v"></i> Details</a></li>
         <li class="grid-update-link"><a href="#" ng-click="updateFunction()"
-            ng-show="gridOptions.updateAllowed && rowsSelected === 1">Update Selected Record</a></li>
+            ng-show="gridOptions.updateAllowed && rowsSelected === 1">
+                <i class="fa fa-pencil-square-o"></i> Update</a></li>
         <li class="divider" ng-show="gridOptions.deleteAllowed && areRowsSelected"></li>
         <li class="grid-delete-link"><a href="#" ng-click="deleteFunction()"
-            ng-show="gridOptions.deleteAllowed && areRowsSelected">Delete Selected Record</a></li>
+            ng-show="gridOptions.deleteAllowed && areRowsSelected">
+                <i class="fa fa-trash-o"></i> Delete</a></li>
         <li class="divider" ng-show="gridOptions.deleteAllowed && areRowsSelected"></li>
         <li class="grid-clear-link"><a href="#" ng-click="clearSelectionsFunction()"
-            ng-show="areRowsSelected">Clear Selections</a></li>
-        <li><a href="#" ng-click="loadNewGrid()">Load Sample Grid</a></li>
+            ng-show="areRowsSelected">
+                <i class="fa fa-circle-o"></i> Clear</a></li>
+        <li><a href="#" ng-click="loadNewGrid()">
+            <i class="fa fa-download"></i> Load Sample</a></li>
     </ul>
 </div>

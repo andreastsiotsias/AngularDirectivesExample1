@@ -121,26 +121,12 @@ angular.module("directiveExample1").directive('passwordInputField',
                 }
         }
     });
-    
-    angular.module("directiveExample1").directive('crudDropUpButtonGroup', 
+      
+angular.module("directiveExample1").directive('crudDropUpButtonGroup', 
     function() {
         return {
             restrict: 'A',
             templateUrl: './templates/CRUDDropUpButtonGroup.html',
-            replace: true,
-            scope: false,
-            controller: function($scope, $element, utilityFunctions){   
-            },
-            link: function(scope, el, attr) {
-            }
-        };
-    });
-    
-angular.module("directiveExample1").directive('crudButtonGroup', 
-    function() {
-        return {
-            restrict: 'A',
-            templateUrl: './templates/CRUDButtonGroup.html',
             replace: true,
             scope: false,
             controller: function($scope, $element, utilityFunctions){
@@ -547,7 +533,7 @@ angular.module("directiveExample1").directive('grid',
                     elem.kendoGrid(gridConfig);
                     // set the title from the grid configuration array
                     scope.gridTitle = gridConfig.title;
-                    createNavbarControls();
+                    //createNavbarControls();
                     createFootbarControls();
                     createModals();
                     // and make sure it fits snugly and adapts to window resizing
@@ -621,19 +607,19 @@ angular.module("directiveExample1").directive('grid',
                 }
                 //
                 // create the grid's NAVBAR and add the CRUD buttons and TITLE
-                function createNavbarControls () {
-                    scope.navbar = scope.grid[0].querySelector('.navbar-in-grid');
-                    // create the NAVBAR title and attach it
-                    var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline; bottom: 0px; margin-bottom: 2px; position: absolute; overflow: hidden">Data Set: {{gridTitle}}</h3>');
-                    var compiledTitleElement = $compile(titleElement);
-                    compiledTitleElement(scope);
-                    $(scope.navbar).append(titleElement);
-                    // create the CDRUD buttons and attach to the NAVBAR
-                    var crudElement = angular.element('<div crud-button-group></div>');
-                    var compiledCRUDElement = $compile(crudElement);
-                    compiledCRUDElement(scope);
-                    $(scope.navbar).append(crudElement);
-                };
+                //function createNavbarControls () {
+                //    scope.navbar = scope.grid[0].querySelector('.navbar-in-grid');
+                //    // create the NAVBAR title and attach it
+                //    var titleElement = angular.element('<h3 navbar-left style="width: 70%;display: inline; bottom: 0px; margin-bottom: 2px; position: absolute; overflow: hidden">Data Set: {{gridTitle}}</h3>');
+                //    var compiledTitleElement = $compile(titleElement);
+                //    compiledTitleElement(scope);
+                //    $(scope.navbar).append(titleElement);
+                //    // create the CDRUD buttons and attach to the NAVBAR
+                //    var crudElement = angular.element('<div crud-button-group></div>');
+                //    var compiledCRUDElement = $compile(crudElement);
+                //    compiledCRUDElement(scope);
+                //    $(scope.navbar).append(crudElement);
+                //};
                 //
                 // create the Footbar and associated controls
                 function createFootbarControls () {
@@ -677,7 +663,8 @@ angular.module("directiveExample1").directive('grid',
                         otherElementsHeight += $(this).outerHeight();
                     });
                     // adjust otherElementsHeight ...... kludge ..... seems that adding 13 pixels to it makes it work OK ... Spooky !!!!!
-                    otherElementsHeight += 13;
+                    //otherElementsHeight += 13;
+                    otherElementsHeight -=2;
                     dataArea = scope.grid.find(".k-grid-content");
                     resizeGrid();
                     // deal with overall window resize events
@@ -692,9 +679,9 @@ angular.module("directiveExample1").directive('grid',
                 //
                 // Constrain / Adjust Grid Options
                 function constrainGrid (gridConfig) {
-                    if (!gridConfig.title) {
-                        gridConfig.title = 'Data Set: Unspecified';
-                    }
+                    //if (!gridConfig.title) {
+                    //    gridConfig.title = 'Data Set: Unspecified';
+                    //}
                     gridConfig.allowCopy = true; // allow copy to clipboard
                     gridConfig.autoBind = true;  // bind to datasource automatically
                     gridConfig.columnResizeHandleWidth = 5; // set the column grasp handle to 5 pixels
@@ -724,9 +711,9 @@ angular.module("directiveExample1").directive('grid',
                     gridConfig.scrollable = true;  // enable scrolling when the rows exceed visible area
                     gridConfig.selectable = "multiple";  // enable row selection in grid
                     gridConfig.sortable = true;  // allow sorting by clicking on column headers
-                    gridConfig.toolbar = [
-                        {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
-                    ];
+                    //gridConfig.toolbar = [
+                    //   {template: '<nav class="navbar navbar-in-grid" style="margin-bottom: 0px; min-height: 20px"></nav>'}
+                    //];
                 }
                 //
                 // capture and process data source change events
@@ -747,24 +734,6 @@ angular.module("directiveExample1").directive('grid',
                         });
                     }
                 }
-                // capture the Data Bound event - ie when the datasource is bound to the grid
-                //function gridDataBound(evt) {
-                //    console.log ("Grid was bound to data source");
-                //    console.log ("Number of rows in the grid: "+scope.gridDataSource.total());
-                //    var dsItemNumber = scope.gridDataSource.total();
-                //    for (i=0; i<dsItemNumber; i++) {
-                //        scope.gridDataSource._data[i].uid_reference = scope.gridDataSource._data[i].uid;
-                //    }
-                //    console.log ("Copied UID to REF_UID");
-                //}
-                // capture and process data source sync (response from server OK) events
-                //function gridDataSourceSync () {
-                //    console.log ("Datasource SYNC completed OK");
-                //}
-                // capture and process data source error (response from server NOT OK) events
-                //function gridDataSourceError (evt) {
-                //    console.log ("Datasource Server-Comms Error: "+evt.status);
-                //}
             }
         };
     });
