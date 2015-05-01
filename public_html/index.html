@@ -34,12 +34,7 @@ and open the template in the editor.
         <link rel="stylesheet" href="./css/directiveExample1.css" />
     </head>
     <body ng-controller="MainCtrl">
-        <div class="g-signin"
-            data-callback="googlePlusLoginFinished"
-            data-approvalprompt="force"
-            data-clientid="779306128660-oifef8cadlkgapshmob99df5jhvf193e.apps.googleusercontent.com"
-            data-scope="https://www.googleapis.com/auth/userinfo.email"
-            data-cookiepolicy="single_host_origin"></div>
+        <google-sign-in></google-sign-in>    
         <example-directive isovar="testvar" callback="mainCtrlCallback()"></example-directive>
         <p>Returned value : {{testvar}}</p>
         <table>

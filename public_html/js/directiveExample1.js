@@ -4,7 +4,7 @@
 
 angular.module("directiveExample1", [ "kendo.directives", "utility.services" ]);
 
-    googlePlusLoginFinished = function (authResult) {
+    googleSignInFinished = function (authResult) {
         if (authResult['status']['signed_in']) {
             console.log ("Login succeeded on "+Math.floor(Date.now() / 1000));
             //$scope.signinRecord = authResult;
@@ -68,10 +68,38 @@ angular.module("directiveExample1").controller ("MainCtrl", ['$scope', 'jsonpHTT
         
 }]);
 
-angular.module("directiveExample1").directive('exampleDirective', 
+angular.module("directiveExample1").directive('googleSignIn', 
     function() {
         return {
             restrict: 'EA',
+            templateUrl: './templates/googleSignIn.html',
+            replace: true,
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                $scope.fieldid = utilityFunctions.guid();
+                console.log("In googleSignIn's controller");
+                $scope.googleSignInFunction = function () {
+                    console.log ("googleSignInFunction was called");
+                    var googleSignInParams = {
+                        "clientid" : "779306128660-oifef8cadlkgapshmob99df5jhvf193e.apps.googleusercontent.com",
+                        "scope" : "https://www.googleapis.com/auth/userinfo.email",
+                        "approvalprompt" : "force",
+                        "cookiepolicy" : "single_host_origin",
+                        "callback" : "googleSignInFinished"
+                    };
+                    gapi.auth.signIn(googleSignInParams);
+                };
+            },
+            link: function(scope, el, attr) {
+                console.log("In googleSignIn's link");
+            }
+        }
+    });
+
+angular.module("directiveExample1").directive('exampleDirective', 
+    function() {
+        return {
+            restrict: 'E',
             templateUrl: './templates/emailInput.html',
             scope: {
                 isovar: '=',

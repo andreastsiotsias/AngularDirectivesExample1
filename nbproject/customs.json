@@ -1,6 +1,7 @@
 {
     "elements": {
-        "example-directive": {}
+        "example-directive": {},
+        "google-sign-in": {}
     },
     "attributes": {
         "crud-button-group": {
