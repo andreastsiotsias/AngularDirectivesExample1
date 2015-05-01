@@ -1,6 +1,7 @@
 {
     "elements": {
         "example-directive": {},
+        "sample-form": {},
         "google-sign-in": {}
     },
     "attributes": {

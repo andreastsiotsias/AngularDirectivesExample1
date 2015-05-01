@@ -95,6 +95,23 @@ angular.module("directiveExample1").directive('googleSignIn',
             }
         }
     });
+    
+angular.module("directiveExample1").directive('sampleForm', 
+    function() {
+        return {
+            restrict: 'EA',
+            templateUrl: './templates/sampleForm.html',
+            replace: true,
+            scope: {},
+            controller: function($scope, $element, utilityFunctions){
+                $scope.fieldid = utilityFunctions.guid();
+                console.log("In sampleForm's controller");
+            },
+            link: function(scope, el, attr) {
+                console.log("In sampleForm's link");
+            }
+        }
+    });
 
 angular.module("directiveExample1").directive('exampleDirective', 
     function() {
